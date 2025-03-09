@@ -1,0 +1,196 @@
+﻿<Page x:Class="NoiseBarrierTesterAppV1.Pages.manualPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NoiseBarrierTesterAppV1.Pages"
+      mc:Ignorable="d" 
+      xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
+      d:DesignHeight="1032" d:DesignWidth="1824"
+      Title="Page1">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="#f1f2eb">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <!--Left Piston-->
+        <Border Grid.Column="0" BorderThickness="20" BorderBrush="Transparent">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Numerical Data and Control -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70*"/>
+                        <ColumnDefinition Width="30*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Numerical Data -->
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="Left Piston Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="Setpoint" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            </Grid>
+                            
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="Current" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Buttons -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="01" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="3" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+                    </Grid>
+                </Grid>
+                
+                <!-- Graph -->
+                <ScottPlot:WpfPlot Grid.Row="1" Name="leftPistonPlot"/>
+
+
+            </Grid>
+            
+            
+        </Border>
+
+        <Border Grid.Column="1" BorderThickness="20" BorderBrush="Transparent">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Numerical Data and Control -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70*"/>
+                        <ColumnDefinition Width="30*"/>
+                    </Grid.ColumnDefinitions>
+                    <!-- Numerical Data -->
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="20*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="Right Piston Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="Setpoint" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            </Grid>
+
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="Current" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+
+                    <!-- Buttons -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+
+                        <Border Grid.Row="0" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="01" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+
+                        <Border Grid.Row="3" Style="{StaticResource defaultBorder}">
+                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}"/>
+                        </Border>
+                    </Grid>                  
+                </Grid>
+                
+                <!-- Graph -->
+                <ScottPlot:WpfPlot Grid.Row="1" Name="rightPistonPlot"/>
+
+
+            </Grid>
+
+        </Border>
+    </Grid>
+</Page>

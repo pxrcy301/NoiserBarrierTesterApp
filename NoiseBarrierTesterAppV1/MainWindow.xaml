@@ -1,0 +1,106 @@
+﻿<Window x:Class="NoiseBarrierTesterAppV1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NoiseBarrierTesterAppV1"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Noise Barrier Tester App v1" Height="1032" Width="1920"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <!-- Colors -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#156082"/>
+        <SolidColorBrush x:Key="SecondaryColor" Color="LightGray"/>
+        <SolidColorBrush x:Key="BackgroundColor" Color="#f1f2eb"/>
+        <SolidColorBrush x:Key="BaseColor" Color="DarkGray"/>
+
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="Black"/>
+        <SolidColorBrush x:Key="SecondaryTextColor" Color="White"/>
+        <sys:Int16 x:Key="windowHeight">1032</sys:Int16>
+
+        <Style x:Key="tabButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#a6a6a6"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="40"/>
+            <Setter Property="FontFamily" Value="Aptos"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="border" 
+                            BorderThickness="8"
+                            BorderBrush="Transparent" 
+                            CornerRadius="4" 
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="LightGray"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="0,0,0,5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <!--<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>-->
+        </Style>
+
+    </Window.Resources>
+
+    <Border BorderThickness="0" BorderBrush="{StaticResource BackgroundColor}">
+        <Grid Background="{StaticResource BaseColor}" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="95*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column ="0">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="33*"/>
+                    <RowDefinition Height="33*"/>
+                    <RowDefinition Height="33*"/>
+                </Grid.RowDefinitions>
+
+                <!--Setup Button-->
+                <Border Name="manualBorder"  Grid.Row="0" CornerRadius="30,0,0,30" BorderThickness="5,5,0,5" BorderBrush="Gray" Background="{StaticResource BackgroundColor}">
+                    <Button Content="Manual" Style="{StaticResource tabButtonStyle}" Click="onManualButtonClick">
+                        <Button.LayoutTransform>
+                            <RotateTransform Angle="-90"/>
+                        </Button.LayoutTransform>
+                    </Button>
+                </Border>
+
+                <!--Setup Button-->
+                <Border Name="setupBorder"  Grid.Row="1" CornerRadius="30,0,0,30" BorderThickness="5,5,0,5" BorderBrush="Gray" Background="{StaticResource BackgroundColor}">
+                    <Button Content="Setup" Style="{StaticResource tabButtonStyle}" Click="onSetupButtonClick">
+                        <Button.LayoutTransform>
+                            <RotateTransform Angle="-90"/>
+                        </Button.LayoutTransform>
+                    </Button>
+                </Border>
+                
+
+                <!--Operation/Results Button-->
+                <Border Name="operationBorder" Grid.Row="2" CornerRadius="30,0,0,30" BorderThickness="5,5,5,5" BorderBrush="Gray" Background="{StaticResource PrimaryColor}">
+                    <Button Content="Operation" Style="{StaticResource tabButtonStyle}" Click="onOperationButtonClick">
+                        <Button.LayoutTransform>
+                            <RotateTransform Angle="-90"/>
+                        </Button.LayoutTransform>
+                    </Button>
+                </Border>
+            </Grid>
+
+            <Border Grid.Column="1" BorderThickness="0,5,5,5" BorderBrush="Gray" Background="{StaticResource BackgroundColor}">
+                <Frame Name="displayFrame" NavigationUIVisibility="Hidden"/>
+            </Border>
+        </Grid>
+    </Border>
+
+</Window>

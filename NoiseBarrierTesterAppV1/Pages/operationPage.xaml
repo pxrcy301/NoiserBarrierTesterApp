@@ -1,0 +1,229 @@
+﻿<Page x:Class="NoiseBarrierTesterAppV1.Pages.operationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NoiseBarrierTesterAppV1.Pages"
+      xmlns:ScottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF"
+      mc:Ignorable="d" 
+      d:DesignHeight="1032" d:DesignWidth="1824"
+      Title="operationPage">
+
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Styles/Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <!--<Page.Resources>
+        <Style x:Key="headerTextBlock" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="48"/>
+            <Setter Property="FontFamily" Value="Aptos"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="dataTextBlock" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontFamily" Value="Aptos"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="descriptionTextBlock" TargetType="TextBlock">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontFamily" Value="Aptos"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="defaultBorder" TargetType="Border">
+            <Setter Property="BorderThickness" Value="8"/>
+            <Setter Property="BorderBrush" Value="#f1f2eb"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Background" Value="Gray"/>
+        </Style>
+
+        <Style x:Key="defaultButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontFamily" Value="Aptos"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Page.Resources>-->
+
+
+    <Grid Background="#f1f2eb">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="50*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!--Left Column-->
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <!--Upper Left Column-->
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!--Status Indicators Row 1-->
+                <Grid Grid.Row ="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Piston 1-->
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="Piston 1 Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+
+                    <!--Piston 2-->
+                    <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="Piston 2 Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+
+                </Grid>
+
+                <!--Status Indicators Row 2-->
+                <Grid Grid.Row ="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Piston 1-->
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="String Gauge 1" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Text="XX.X mm" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+
+                    <!--Piston 2-->
+                    <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="String Gauge 2" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Text="XX.X mm" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+                
+            </Grid>
+            
+            <!--Lower Left Column-->
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="45*"/>
+                    <RowDefinition Height="35*"/>
+                    <RowDefinition Height="20*"/>
+                </Grid.RowDefinitions>
+                
+                <!--Process Control Buttons-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Button Name="startStopBtn" Content="startStop Placeholder" Style="{StaticResource defaultButton}"/>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
+                        <Button Name="pauseResumeBtn" Content="pauseResume Placeholder" Style="{StaticResource defaultButton}"/>
+                    </Border>
+
+                </Grid>
+
+                <Border Grid.Row="1" Style="{StaticResource defaultBorder}">
+                    <TextBlock Name="statusMessage" Text="Guide/Status Message" Style="{StaticResource descriptionTextBlock}"/>
+                </Border>
+                
+                <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
+                    <Button Name="exportDataBtn" Content="exportData Placeholder" Style="{StaticResource defaultButton}"/>
+                </Border>
+
+            </Grid>
+
+        </Grid>
+
+        <!--Right Column-->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ScottPlot:WpfPlot Grid.Row="0" x:Name="forceTimePlot"/>
+            <ScottPlot:WpfPlot Grid.Row="1" x:Name="deflectionTimePlot"/>
+            <ScottPlot:WpfPlot Grid.Row="2" x:Name="forceDeflectionPlot"/>
+        </Grid>
+    </Grid>
+</Page>
