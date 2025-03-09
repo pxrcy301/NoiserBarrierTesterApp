@@ -11,6 +11,8 @@ using System.Windows.Shapes;
 using NoiseBarrierTesterAppV1.Pages;
 using ScottPlot.TickGenerators.Financial;
 
+
+// Test Message
 namespace NoiseBarrierTesterAppV1
 {
     /// <summary>
