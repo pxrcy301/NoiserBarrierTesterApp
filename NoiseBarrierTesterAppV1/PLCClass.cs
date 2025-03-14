@@ -166,8 +166,6 @@ namespace NoiseBarrierTesterAppV1
                 Console.WriteLine($"Error at ReceiveData(): {ex.ToString()}");
                 return false;
             }
-        }
-    
-    
+        }    
     }
 }
