@@ -1,4 +1,6 @@
-﻿using ScottPlot;
+﻿using Microsoft.Win32;
+using ScottPlot;
+using ScottPlot.Plottables;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.IO;
 
 namespace NoiseBarrierTesterAppV1.Pages
 {
@@ -25,54 +28,7 @@ namespace NoiseBarrierTesterAppV1.Pages
         bool testPaused = false;
         ScottPlot.Color[] paletteColors = { ScottPlot.Colors.Blue, ScottPlot.Colors.Green, ScottPlot.Colors.Green };
 
-        struct PlotLegendItem
-        {
-            public LegendItem commanded;
-            public LegendItem left;
-            public LegendItem right;
-            public LegendItem average;
 
-            public PlotLegendItem()
-            {
-                this.commanded = new()
-                {
-                    LineColor = ScottPlot.Colors.Gray,
-                    MarkerFillColor = ScottPlot.Colors.Gray,
-                    MarkerLineColor = ScottPlot.Colors.Gray,
-                    LineWidth = 5,
-                    LabelText = "Programmed"
-                };
-
-                this.left = new()
-                {
-                    LineColor = ScottPlot.Colors.Blue,
-                    MarkerFillColor = ScottPlot.Colors.Blue,
-                    MarkerLineColor = ScottPlot.Colors.Blue,
-                    LineWidth = 5,
-                    LabelText = "Left Piston"
-                };
-
-                this.right = new()
-                {
-                    LineColor = ScottPlot.Colors.Orange,
-                    MarkerFillColor = ScottPlot.Colors.Orange,
-                    MarkerLineColor = ScottPlot.Colors.Orange,
-                    LineWidth = 5,
-                    LabelText = "Right Piston"
-                };
-
-                this.average = new()
-                {
-                    LineColor = ScottPlot.Colors.Green,
-                    MarkerFillColor = ScottPlot.Colors.Green,
-                    MarkerLineColor = ScottPlot.Colors.Green,
-                    LineWidth = 5,
-                    LabelText = "Average"
-                };
-
-            }
-        }
-        PlotLegendItem plotLegendItems;
 
         readonly MainWindow MWR; // Main Window Reference
         public operationPage(MainWindow referenceInstance)
@@ -82,9 +38,6 @@ namespace NoiseBarrierTesterAppV1.Pages
 
             NavigationCommands.BrowseBack.InputGestures.Clear();
             NavigationCommands.BrowseForward.InputGestures.Clear();
-
-            plotLegendItems = new PlotLegendItem();
-
             SetupPlots();
         }
 
@@ -112,11 +65,13 @@ namespace NoiseBarrierTesterAppV1.Pages
             // Force-Time Plot
             forceTimePlot.Plot.Clear();
 
-            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceLeftList);
-            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceRightList);
+            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceLeftList).LegendText = "Left, Measured (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceRightList).LegendText = "Right, Measured (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceLeftList).LegendText = "Left, Commanded (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceRightList).LegendText = "Right, Commanded (lbf)";
 
             forceTimePlot.Plot.Axes.AutoScale();
-            forceTimePlot.Plot.ShowLegend(new LegendItem[] {plotLegendItems.left, plotLegendItems.right});
+            forceTimePlot.Plot.ShowLegend();
 
             forceTimePlot.Refresh();
             
@@ -124,12 +79,12 @@ namespace NoiseBarrierTesterAppV1.Pages
             // Deflection-Time PLot
             deflectionTimePlot.Plot.Clear();
             
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceUpList);
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceDownList);
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceAverageList);
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceUpList).LegendText = "Upper, Measured (in)";
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceDownList).LegendText = "Lower, Measured (in)";
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceAverageList).LegendText = "Average, Measured (in)";
 
             deflectionTimePlot.Plot.Axes.AutoScale();
-            deflectionTimePlot.Plot.ShowLegend(new LegendItem[] {plotLegendItems.left, plotLegendItems.right, plotLegendItems.average });
+            deflectionTimePlot.Plot.ShowLegend();
 
             deflectionTimePlot.Refresh();
 
@@ -145,16 +100,42 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         }
 
+        public void RefreshStatusBoxes()
+        {
+            PressureLeftTextBlock.Text = $"{MWR.mData.pressureLeft} psi";
+            PressureRightTextBlock.Text = $"{MWR.mData.pressureRight} psi";
+            DistanceUpperTextBlock.Text = $"{MWR.mData.distanceUpper} in";
+            DistanceLowerTextBlock.Text = $"{MWR.mData.distanceLower} in";
+
+            PressureLeftMaxTextBlock.Text = $"{MWR.mData.pressureLeftMax} psi MAX";
+            PressureRightMaxTextBlock.Text = $"{MWR.mData.pressureRightMax} psi MAX";
+            DistanceUpperMaxTextBlock.Text = $"{MWR.mData.distanceUpperMax} in MAX";
+            DistanceLowerMaxTextBlock.Text = $"{MWR.mData.distanceLowerMax} in MAX";
+
+        }
+
         private void startStopBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Code for Stopping Test
             if (testRunning)
             {
                 MWR.plc.Writeline(MWR.MODE_EXIT);
+                startStopBtn.Content = "Start Test";
             }
 
+            // Code for Starting Test
             else // test not running
             {
+                // Prepare comms and send data to PLC
+                MWR.pausePLCCommsThread = true;
+                Thread.Sleep(50);
+                MWR.plc.SendForceDatapoints(MWR.EXCHANGE_DATAPOINTS_REQUEST, MWR.EXCHANGE_DATAPOINTS_TERMINATION, MWR.cData.timeList, MWR.cData.forceLeftList, MWR.cData.forceRightList);
+                MWR.pausePLCCommsThread = false;
+                
+                // Start the Test
                 MWR.plc.Writeline(MWR.OPERATION_START);
+
+                startStopBtn.Content = "Stop Test";
             }
 
                 testRunning = !testRunning;
@@ -174,6 +155,72 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
 
             testPaused = !testPaused;
+        }
+
+        private void ExportDataBtn_Click(object sender, RoutedEventArgs e)
+        {
+        // 1. Open file dialog to get file path
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog();
+
+            try
+            {
+                if (openFolderDialog.ShowDialog() == true)
+                {
+                    
+                    string folderPath = openFolderDialog.FolderName;
+                    Console.WriteLine($"Selected folder: {folderPath}");
+
+                    // 2. Get data from setup page
+                    string outputFileName;
+                    string projectNumber = MWR._setupPage.ProjectNumberTextBox.Text;
+                    string sampleName = MWR._setupPage.SampleNameTextBox.Text;
+                    string sampleHeight = MWR._setupPage.HeightTextBox.Text;
+                    string sampleWidth = MWR._setupPage.WidthTextBox.Text;
+                    DateTime? selectedDateTime = MWR._setupPage.DateTimePicker.SelectedDate;
+                    string selectedDateTimeString;
+
+                    if(selectedDateTime == null)
+                    {
+                        selectedDateTimeString = "NoDateSelected";
+                    }
+                    else
+                    {
+                        selectedDateTimeString = selectedDateTime.Value.ToString("yyyy-MM-dd");
+                    }
+
+                    // 3. Generate the name of the output file
+
+                    outputFileName = $"{projectNumber}_{selectedDateTimeString}_{sampleName}.csv";
+
+                    // 4. Initialize output file and write setup entry information to it
+                    OutputFile finalOutputFile;
+                    finalOutputFile = new OutputFile(folderPath + "//" + outputFileName);
+                    finalOutputFile.Writeline($"Project Number,{projectNumber}");
+                    finalOutputFile.Writeline($"Test Date,{selectedDateTimeString}");
+                    finalOutputFile.Writeline($"Sample Name,{sampleName}");
+                    finalOutputFile.Writeline($"Width (ft),{sampleWidth}");
+                    finalOutputFile.Writeline($"Height (ft),{sampleHeight}");
+                    finalOutputFile.Writeline("");
+
+                    // 5. Close the temporary output file in mainWindow and open it back up and copy the contents line by line
+                    MWR.tempOutputFile.Close();
+
+                    string[] tempFileLines = File.ReadAllLines(MWR.downloadsPath + MWR.tempFileName);
+
+                    foreach(string line in tempFileLines)
+                    {
+                        finalOutputFile.Writeline(line);
+                    }
+                    finalOutputFile.Close();
+                    Console.WriteLine("Final output file writing completed and closed.");
+
+                }
+            }
+
+            catch (Exception ex) {
+                throw new Exception(ex.ToString());
+            }
+
         }
     }
 }

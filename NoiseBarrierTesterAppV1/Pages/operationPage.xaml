@@ -107,9 +107,9 @@
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="1" Text="Piston 1 Pressure" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="1" Text="Left Piston Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name ="PressureLeftTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name="PressureLeftMaxTextBlock" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
 
@@ -124,9 +124,9 @@
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
-                            <TextBlock Grid.Row="1" Text="Piston 2 Pressure" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="1" Text="Right Piston Pressure" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name="PressureRightTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name="PressureRightMaxTextBlock" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
 
@@ -151,8 +151,8 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="String Gauge 1" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Text="XX.X mm" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name="DistanceUpperTextBlock" Text="XX.X in" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name="DistanceUpperMaxTextBlock" Text="XX.X in MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
 
@@ -168,8 +168,8 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="String Gauge 2" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Text="XX.X mm" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name ="DistanceLowerTextBlock" Text="XX.X in" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name ="DistanceLowerMaxTextBlock" Text="XX.X in MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -192,7 +192,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
-                        <Button Name="startStopBtn" Content="startStop Placeholder" Style="{StaticResource defaultButton}" Click="startStopBtn_Click"/>
+                        <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButton}" Click="startStopBtn_Click"/>
                     </Border>
 
                     <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
@@ -206,7 +206,7 @@
                 </Border>
                 
                 <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
-                    <Button Name="exportDataBtn" Content="exportData Placeholder" Style="{StaticResource defaultButton}"/>
+                    <Button Name="ExportDataBtn" Content="Export Data" Style="{StaticResource defaultButton}" Click="ExportDataBtn_Click"/>
                 </Border>
 
             </Grid>

@@ -57,23 +57,29 @@ namespace NoiseBarrierTesterAppV1
         public String OPERATION_RESUME = "O_RESUME";
         public String OPERATION_ESTOP = "O_ESTOP";
 
+        public String SET_LEFT = "SET_L";
+        public String SET_RIGHT = "SET_R";
+
+        public String EXCHANGE_DATAPOINTS_REQUEST = "EXCH_DP_REQ";
+        public String EXCHANGE_DATAPOINTS_TERMINATION = "EXCH_DP_TERM";
 
         #endregion
 
         #region Pages
         // Initialize single instances of pages for persistence (as opposed to making a new instace of the page every time the tabs are switched)
-        manualPage? _manualPage;
-        setupPage? _setupPage;
-        operationPage? _operationPage;
+        public manualPage? _manualPage;
+        public setupPage? _setupPage;
+        public operationPage? _operationPage;
         #endregion
 
         #region PLC Settings
         // PLC Instance and Settings
         public PLC plc;
-        string PLCPort = "COM5";
+        string PLCPort = "COM7";
         public int PLCBaudRate = 115200;
 
         bool communicateWithPLC = true;
+        public bool pausePLCCommsThread = false;
 
         Thread plcCommsThread;
         #endregion
@@ -111,12 +117,18 @@ namespace NoiseBarrierTesterAppV1
         {
             public float plcTime;
             public float pressureLeft;
+            public float pressureLeftMax;
             public float pressureRight;
+            public float pressureRightMax;
             public float forceLeft;
+            public float forceLeftMax;
             public float forceRight;
+            public float forceRightMax;
             public float forceAverage;
-            public float distanceUp;
-            public float distanceDown;
+            public float distanceUpper;
+            public float distanceUpperMax;
+            public float distanceLower;
+            public float distanceLowerMax;
             public float distanceAverage;
 
             public List<float> timeList;
@@ -223,9 +235,9 @@ namespace NoiseBarrierTesterAppV1
         #endregion
 
         // Output File
-        string downloadsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
-        string tempFilePath = "\\tempOutputFile.csv";
-        OutputFile outputFile;
+        public string downloadsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        public string tempFileName = "\\tempOutputFile.csv";
+        public OutputFile tempOutputFile;
 
         public MainWindow()
         {
@@ -252,8 +264,8 @@ namespace NoiseBarrierTesterAppV1
 
             // Ready a new file for writing to
             Console.WriteLine($"Working directory: {Directory.GetCurrentDirectory()}");
-            outputFile = new OutputFile(downloadsPath + tempFilePath);
-            outputFile.WriteHeaders();
+            tempOutputFile = new OutputFile(downloadsPath + tempFileName);
+            tempOutputFile.WriteHeaders();
 
         }
 
@@ -279,25 +291,24 @@ namespace NoiseBarrierTesterAppV1
                 return;
             }
 
-            // Update data reporting interval
-            plc.Writeline(REPORTING_INTERVAL_EDIT);
-            plc.Writeline(plcReportingInterval.ToString());
-
-
             // Start PLCCommsThread
             plcCommsThread = new Thread(PLCCommsFunction);
             plcCommsThread.Start();
 
+            // Update data reporting interval
+            plc.Writeline(REPORTING_INTERVAL_EDIT);
+            plc.Writeline(plcReportingInterval.ToString());
 
 
         }
 
         void PLCCommsFunction()
         {
+            debugPrint("PLCCommsFunction started.");
             string msg;
             while (communicateWithPLC)
             {
-                if(plc.serialObject.BytesToRead > 0)
+                if(plc.serialObject.BytesToRead > 0 && !pausePLCCommsThread)
                 {
                     msg = plc.Readline();
 
@@ -307,15 +318,21 @@ namespace NoiseBarrierTesterAppV1
                         if(plc.ReceiveData(ref mData.plcTime, 
                                            ref mData.pressureLeft, ref mData.pressureRight,
                                            ref mData.forceLeft, ref mData.forceRight, 
-                                           ref mData.distanceUp, ref mData.distanceDown)
+                                           ref mData.distanceUpper, ref mData.distanceLower)
                            
                           )
                         {
                             debugPrint("Data successfully received from PLC.");
 
                             // Add the instantaneous values to the list
-                            mData.distanceAverage = (mData.distanceUp + mData.distanceDown) / 2f;
+                            mData.distanceAverage = (mData.distanceUpper + mData.distanceLower) / 2f;
                             mData.forceAverage = (mData.forceLeft + mData.forceRight) / 2f;
+                            mData.pressureLeftMax = Math.Max(mData.pressureLeftMax, mData.pressureLeft);
+                            mData.pressureRightMax = Math.Max(mData.pressureRightMax, mData.pressureRight);
+                            mData.forceLeftMax = Math.Max(mData.forceLeftMax, mData.forceLeft);
+                            mData.forceRightMax = Math.Max(mData.forceRightMax, mData.forceRight);
+                            mData.distanceUpperMax = Math.Max(mData.distanceUpperMax, mData.distanceUpper);
+                            mData.distanceLowerMax = Math.Max(mData.distanceLowerMax, mData.distanceLower);
 
                             mData.timeList.Add(mData.plcTime);
                             mData.pressureLeftList.Add(mData.pressureLeft);
@@ -323,8 +340,8 @@ namespace NoiseBarrierTesterAppV1
                             mData.forceLeftList.Add(mData.forceLeft);
                             mData.forceRightList.Add(mData.forceRight);
                             mData.forceAverageList.Add(mData.forceAverage);
-                            mData.distanceUpList.Add(mData.distanceUp);
-                            mData.distanceDownList.Add(mData.distanceDown);
+                            mData.distanceUpList.Add(mData.distanceUpper);
+                            mData.distanceDownList.Add(mData.distanceLower);
                             mData.distanceAverageList.Add(mData.distanceAverage);
 
                             // Update the plot with the new data
@@ -338,12 +355,12 @@ namespace NoiseBarrierTesterAppV1
 
                                 case OPERATING_MODE.OPERATION:
                                     Application.Current.Dispatcher.Invoke(() => {_operationPage.RefreshPlots();
-                                                                                 //_manualPage.RefreshStatusBoxes();
+                                                                                 _operationPage.RefreshStatusBoxes();
                                     });
-                                    outputFile.WriteData(mData.plcTime,
+                                    tempOutputFile.WriteData(mData.plcTime,
                                                          mData.pressureLeft, mData.pressureRight,
                                                          mData.forceLeft, mData.forceRight, mData.forceAverage,
-                                                         mData.distanceUp, mData.distanceDown, mData.distanceAverage);
+                                                         mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
                                     break;
 
                                 default:
@@ -447,7 +464,7 @@ namespace NoiseBarrierTesterAppV1
             
             plc.Disconnect();
 
-            outputFile.Close();
+            tempOutputFile.Close();
             
 
             Console.WriteLine("----Program Exited----");

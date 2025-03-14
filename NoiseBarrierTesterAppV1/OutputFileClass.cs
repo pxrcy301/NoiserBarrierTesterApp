@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace NoiseBarrierTesterAppV1
 {
-    internal class OutputFile
+    public class OutputFile
     {
         public StreamWriter streamWriter;
         public string filePath;

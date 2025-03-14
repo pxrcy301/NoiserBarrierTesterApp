@@ -89,22 +89,23 @@ namespace NoiseBarrierTesterAppV1
             }
         }
 
-        public bool SendForceDatapoints(List<float> timeList, List<float> forceLeftList, List<float> forceRightList, PLC plc)
+        public bool SendForceDatapoints(string requestString, string terminationString, List<float> timeList, List<float> forceLeftList, List<float> forceRightList)
         // 1. Send the data as string, separated by comma in format time,forceLeft,forceRight\n
         // 2. The PLC should read back the information that was just sent. Confirm this matches what was sent.
         // 3. If the readback matches, continue to the next datapoint untill all points exchanged. On error, print the error and return false.
-
+        
         {
             try
             {
-                
+                this.Writeline(requestString);
                 string sentMessage;
                 string receivedMessage;
+
                 for (int i = 0; i < timeList.Count(); i++)
                 {
-                    sentMessage = $"{timeList[i]},{forceLeftList[i]},{forceRightList[i]}";
+                    sentMessage = $"{(timeList[i]*1000).ToString("F2")},{forceLeftList[i].ToString("F2")},{forceRightList[i].ToString("F2")}";
                     this.Writeline(sentMessage);
-                    receivedMessage = plc.Readline();
+                    receivedMessage = this.Readline();
 
                     if(sentMessage != receivedMessage)
                     {
@@ -116,6 +117,8 @@ namespace NoiseBarrierTesterAppV1
                         Console.WriteLine($"Verified point {i + 1} of {timeList.Count}");
                     }
                 }
+
+                this.Writeline(terminationString);
                 return true;
             }
             
@@ -126,6 +129,21 @@ namespace NoiseBarrierTesterAppV1
             }
         }
 
+        public bool SendPressures(string leftKey, float leftPistonPressure, string rightKey, float rightPistonPressure)
+        {
+            try
+            {
+                this.Writeline($"{leftKey}:{leftPistonPressure}");
+                this.Writeline($"{rightKey}:{rightPistonPressure}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending pressure to PLC: {ex.ToString()}");
+                return false;
+            }
+            
+        }
         public bool ReceiveData(ref float plcTime, 
                                 ref float pressureLeft, ref float pressureRight,
                                 ref float forceLeft, ref float forceRight, 

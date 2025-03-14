@@ -56,11 +56,11 @@
 
                         <TextBlock Grid.Column="0" Text="Project No." Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                            <TextBox TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                            <TextBox Name="ProjectNumberTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
                         </Border>
                         <TextBlock Grid.Column="2" Text="Sample Name" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                            <TextBox TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                            <TextBox Name="SampleNameTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
                         </Border>
                     </Grid>
 
@@ -73,14 +73,14 @@
                             <ColumnDefinition Width="35*"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="Height (in)" Style="{DynamicResource fieldLabelTextBlock}"/>
+                        <TextBlock Grid.Column="0" Text="Height (ft)" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15">
-                            <TextBox Name="heightTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="heightTextBoxPreviewKeyDown"/>
+                            <TextBox Name="HeightTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="heightTextBoxPreviewKeyDown"/>
                         </Border>
 
-                        <TextBlock Grid.Column="2" Text="Width (in)" Style="{DynamicResource fieldLabelTextBlock}"/>
+                        <TextBlock Grid.Column="2" Text="Width (ft)" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15">
-                            <TextBox Name="widthTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="widthTextBoxPreviewKeyDown"/>
+                            <TextBox Name="WidthTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="widthTextBoxPreviewKeyDown"/>
                         </Border>
 
                     </Grid>
@@ -95,7 +95,7 @@
                         <TextBlock Grid.Column="0" Text="Date" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
                             <Viewbox HorizontalAlignment="Left">
-                                <DatePicker Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <DatePicker Name="DateTimePicker" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                             </Viewbox>
                         </Border>
 

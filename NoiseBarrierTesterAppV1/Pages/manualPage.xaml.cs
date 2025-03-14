@@ -54,6 +54,7 @@ namespace NoiseBarrierTesterAppV1.Pages
         public void RefreshPlots()
         {
             leftPistonPlot.Plot.Clear();
+            
             leftPistonPlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.pressureLeftList);
 
             rightPistonPlot.Plot.Clear();
@@ -87,6 +88,8 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.rightPistonPressureSetpoint += 5;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
             }
+
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -99,6 +102,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.rightPistonPressureSetpoint += 1;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -111,6 +115,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.rightPistonPressureSetpoint -= 1;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -123,6 +128,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.rightPistonPressureSetpoint -= 5;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -137,6 +143,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.leftPistonPressureSetpoint += 5;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -149,6 +156,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.leftPistonPressureSetpoint += 1;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -161,6 +169,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.leftPistonPressureSetpoint -= 1;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -173,6 +182,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.mmVars.leftPistonPressureSetpoint -= 5;
                 MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
             }
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
             RefreshStatusBoxes();
         }
 
