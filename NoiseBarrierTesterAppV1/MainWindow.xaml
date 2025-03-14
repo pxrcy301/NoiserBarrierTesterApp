@@ -7,6 +7,7 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="Noise Barrier Tester App v1" Height="1032" Width="1920"
+        Closing="onMainWindowClose"
         FontFamily="Segoe UI">
 
     <Window.Resources>

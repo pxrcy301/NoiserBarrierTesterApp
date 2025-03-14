@@ -9,6 +9,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -21,16 +22,20 @@ namespace NoiseBarrierTesterAppV1.Pages
     public partial class manualPage : Page
     {
 
-        MainWindow MWR = (MainWindow)Application.Current.MainWindow; // Main Window Reference
+        readonly MainWindow MWR; // Main Window Reference
+        bool syncInputs = true;
 
-        public manualPage()
+        public manualPage(MainWindow referenceInstance)
         {
             InitializeComponent();
+            MWR = referenceInstance;
 
             NavigationCommands.BrowseBack.InputGestures.Clear();
             NavigationCommands.BrowseForward.InputGestures.Clear();
 
             SetupPlots();
+
+            RefreshStatusBoxes();
         }
 
         private void SetupPlots()
@@ -44,7 +49,147 @@ namespace NoiseBarrierTesterAppV1.Pages
             rightPistonPlot.Plot.Axes.Left.Label.Text = "Pressure [psi]";
             rightPistonPlot.Plot.Axes.Bottom.Label.Text = "Time [s]"; ;
             rightPistonPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
+        }
 
+        public void RefreshPlots()
+        {
+            leftPistonPlot.Plot.Clear();
+            leftPistonPlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.pressureLeftList);
+
+            rightPistonPlot.Plot.Clear();
+            rightPistonPlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.pressureRightList);
+
+            leftPistonPlot.Plot.Axes.AutoScale();
+            rightPistonPlot.Plot.Axes.AutoScale();
+
+            leftPistonPlot.Refresh();
+            rightPistonPlot.Refresh();
+
+        }
+
+        public void RefreshStatusBoxes()
+        {
+            LeftPistonSetpointTextBlock.Text = $"{MWR.mmVars.leftPistonPressureSetpoint.ToString("F1")} psi";
+            RightPistonSetpointTextBlock.Text = $"{MWR.mmVars.rightPistonPressureSetpoint.ToString("F1")} psi";
+            LeftPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
+            RightPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
+        }
+
+        #region Pressure Adjustment Button Functions
+
+        // Left Piston
+        private void LeftPistonPlus5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.leftPistonPressureSetpoint += 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.rightPistonPressureSetpoint += 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void LeftPistonPlus1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.leftPistonPressureSetpoint += 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.rightPistonPressureSetpoint += 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void LeftPistonMinus1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.leftPistonPressureSetpoint -= 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.rightPistonPressureSetpoint -= 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void LeftPistonMinus5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.leftPistonPressureSetpoint -= 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.rightPistonPressureSetpoint -= 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+
+        // Right Piston
+        private void RightPistonPlus5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.rightPistonPressureSetpoint += 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.leftPistonPressureSetpoint += 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void RightPistonPlus1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.rightPistonPressureSetpoint += 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.leftPistonPressureSetpoint += 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void RightPistonMinus1Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.rightPistonPressureSetpoint -= 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.leftPistonPressureSetpoint -= 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        private void RightPistonMinus5Btn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.mmVars.rightPistonPressureSetpoint -= 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            if (syncInputs)
+            {
+                MWR.mmVars.leftPistonPressureSetpoint -= 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            }
+            RefreshStatusBoxes();
+        }
+
+        #endregion
+
+        private void ModeSwitchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            syncInputs = !syncInputs;
+
+            if (syncInputs)
+            {
+                ModeTextBlock.Text = "Sync";
+            }
+            else
+            {
+                ModeTextBlock.Text = "Async";
+            }
         }
     }
 }

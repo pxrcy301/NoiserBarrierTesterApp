@@ -22,17 +22,15 @@ namespace NoiseBarrierTesterAppV1.Pages
     /// </summary>
     public partial class setupPage : Page
     {
-        MainWindow MWR = (MainWindow)Application.Current.MainWindow; // Main Window Reference
 
-        List<float> timeList = new List<float>();
-        List<float> scaledTimeList = new List<float>();
-        List<float> forceLeftList = new List<float>();
-        List<float> forceRightList = new List<float>();
+        readonly MainWindow MWR; // Main Window Reference
+
         List<ForceTableData> forceTableDataList = new List<ForceTableData>();
 
-        public setupPage()
+        public setupPage(MainWindow referenceInstance)
         {
             InitializeComponent();
+            MWR = referenceInstance;
 
             NavigationCommands.BrowseBack.InputGestures.Clear();
             NavigationCommands.BrowseForward.InputGestures.Clear();
@@ -40,6 +38,8 @@ namespace NoiseBarrierTesterAppV1.Pages
             SetupPlots();
 
             forceTable.ItemsSource = LoadForceTable();
+
+            Console.WriteLine(MWR.PLCBaudRate);
         }
 
         private void SetupPlots()
@@ -108,10 +108,10 @@ namespace NoiseBarrierTesterAppV1.Pages
                     string[] lines = File.ReadAllLines(filePath);
 
                     // 2. Go through each line and parse the string data into numbers, fill that information in the arrays
-                    timeList.Clear();
-                    forceLeftList.Clear();
-                    forceRightList.Clear();
-
+                    MWR.cData.timeList.Clear();
+                    MWR.cData.forceLeftList.Clear();
+                    MWR.cData.forceRightList.Clear();
+                    
                     foreach (string line in lines)
                     {
                         if (line == "")
@@ -121,9 +121,9 @@ namespace NoiseBarrierTesterAppV1.Pages
                         else
                         {
                             string[] lineSplit = line.Split(',');
-                            timeList.Add(float.Parse(lineSplit[0]));
-                            forceLeftList.Add(float.Parse(lineSplit[1]));
-                            forceRightList.Add(float.Parse(lineSplit[2]));
+                            MWR.cData.timeList.Add(float.Parse(lineSplit[0]));
+                            MWR.cData.forceLeftList.Add(float.Parse(lineSplit[1]));
+                            MWR.cData.forceRightList.Add(float.Parse(lineSplit[2]));
                             Console.WriteLine(line);
                         }
 
@@ -144,12 +144,12 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         }
 
-        private void refreshForcePlot()
+        private void refreshForcePlot() 
         {
             forcePreviewPlot.Plot.Clear();
 
-            var leftScatter = forcePreviewPlot.Plot.Add.Scatter(scaledTimeList, forceLeftList);
-            var rightScatter = forcePreviewPlot.Plot.Add.Scatter(scaledTimeList, forceRightList);
+            var leftScatter = forcePreviewPlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceLeftList);
+            var rightScatter = forcePreviewPlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceRightList);
 
             forcePreviewPlot.Plot.Axes.AutoScale();
             forcePreviewPlot.Refresh();
@@ -159,9 +159,9 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             forceTableDataList.Clear();
 
-            for (int i = 0; i < timeList.Count; i++)
+            for (int i = 0; i < MWR.cData.timeList.Count; i++)
             {
-                forceTableDataList.Add(new ForceTableData { Original_Time = timeList[i], Left_Force = forceLeftList[i], Right_Force = forceRightList[i] });
+                forceTableDataList.Add(new ForceTableData { Original_Time = MWR.cData.timeList[i], Left_Force = MWR.cData.forceLeftList[i], Right_Force = MWR.cData.forceRightList[i] });
             }
             
             forceTable.ItemsSource = forceTableDataList;
@@ -173,10 +173,10 @@ namespace NoiseBarrierTesterAppV1.Pages
 
             float testSpeed = float.Parse(testSpeedTextBox.Text)/100;
 
-            scaledTimeList.Clear();
-            foreach (float time in timeList)
+            MWR.cData.scaledTimeList.Clear();
+            foreach (float time in MWR.cData.timeList)
             {
-                scaledTimeList.Add((float) Math.Round(time/testSpeed,2));
+                MWR.cData.scaledTimeList.Add((float) Math.Round(time/testSpeed,2));
             }
 
             refreshForcePlot();

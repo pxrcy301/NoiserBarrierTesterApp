@@ -18,21 +18,22 @@
     </Page.Resources>
 
     <Grid Background="#f1f2eb">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35*"/>
+            <RowDefinition Height="65*"/>
+        </Grid.RowDefinitions>
         
-        <!--Left Piston-->
-        <Border Grid.Column="0" BorderThickness="20" BorderBrush="Transparent">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                </Grid.RowDefinitions>
+        <!-- Control and Status Elements-->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="45*"/>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="45*"/>
+            </Grid.ColumnDefinitions>
 
-                <!-- Numerical Data and Control -->
-                <Grid Grid.Row="0">
+            <!-- Left Piston -->
+            <Border Grid.Column="0" BorderThickness="20" BorderBrush="Transparent">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70*"/>
                         <ColumnDefinition Width="30*"/>
@@ -56,9 +57,9 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Setpoint" Style="{StaticResource dataTextBlock}"/>
-                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Name ="LeftPistonSetpointTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
                             </Grid>
-                            
+
 
                             <Grid Grid.Row="3">
                                 <Grid.ColumnDefinitions>
@@ -67,12 +68,12 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Current" Style="{StaticResource dataTextBlock}"/>
-                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Name ="LeftPistonPressureTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
                             </Grid>
 
                         </Grid>
                     </Border>
-                    
+
                     <!-- Buttons -->
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
@@ -83,41 +84,43 @@
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}" Click="LeftPistonPlus5Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="01" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}" Click="LeftPistonPlus1Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}" Click="LeftPistonMinus1Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="3" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}" Click="LeftPistonMinus5Btn_Click"/>
                         </Border>
                     </Grid>
                 </Grid>
-                
-                <!-- Graph -->
-                <ScottPlot:WpfPlot Grid.Row="1" Name="leftPistonPlot"/>
-
-
-            </Grid>
+            </Border>
             
-            
-        </Border>
+            <!-- Sync Button-->
+            <Border Grid.Column="1" BorderThickness="0,20,0,20" BorderBrush="Transparent">
+                <Border Style="{StaticResource defaultBorder}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
 
-        <Border Grid.Column="1" BorderThickness="20" BorderBrush="Transparent">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50*"/>
-                    <RowDefinition Height="50*"/>
-                </Grid.RowDefinitions>
-
-                <!-- Numerical Data and Control -->
-                <Grid Grid.Row="0">
+                        <TextBlock Grid.Row="0" Text="Mode:" Style="{StaticResource headerTextBlock}"/>
+                        <TextBlock Grid.Row="1" Name ="ModeTextBlock" Text="Sync" Style="{StaticResource descriptionTextBlock}"/>
+                        <Button Grid.Row="2" Content="🗘" Style="{StaticResource defaultButton}" Click="ModeSwitchBtn_Click"/>
+                    </Grid>
+                </Border>
+            </Border>
+            <!-- Right Piston-->
+            <Border Grid.Column="2" BorderThickness="20" BorderBrush="Transparent">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="70*"/>
                         <ColumnDefinition Width="30*"/>
@@ -141,7 +144,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Setpoint" Style="{StaticResource dataTextBlock}"/>
-                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Name ="RightPistonSetpointTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
                             </Grid>
 
 
@@ -152,7 +155,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="Current" Style="{StaticResource dataTextBlock}"/>
-                                <TextBlock Grid.Column="1" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                                <TextBlock Grid.Column="1" Name ="RightPistonPressureTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
                             </Grid>
 
                         </Grid>
@@ -168,29 +171,47 @@
                         </Grid.RowDefinitions>
 
                         <Border Grid.Row="0" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮝ 5 psi" Style="{StaticResource defaultButton}" Click="RightPistonPlus5Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="01" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮝ 1 psi" Style="{StaticResource defaultButton}" Click="RightPistonPlus1Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮟ 1 psi" Style="{StaticResource defaultButton}" Click="RightPistonMinus1Btn_Click"/>
                         </Border>
 
                         <Border Grid.Row="3" Style="{StaticResource defaultBorder}">
-                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}"/>
+                            <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}" Click="RightPistonMinus5Btn_Click"/>
                         </Border>
-                    </Grid>                  
+                    </Grid>
                 </Grid>
-                
-                <!-- Graph -->
+            </Border>
+        </Grid>
+        
+        <!--Plots-->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left Piston Plot-->
+            <Border Grid.Column="0" BorderThickness="20" BorderBrush="Transparent">
+                <ScottPlot:WpfPlot Grid.Row="1" Name="leftPistonPlot"/>
+            </Border>
+
+            <!-- Right Piston Plot-->
+            <Border Grid.Column="1" BorderThickness="20" BorderBrush="Transparent">
                 <ScottPlot:WpfPlot Grid.Row="1" Name="rightPistonPlot"/>
+            </Border>
 
 
-            </Grid>
 
-        </Border>
+        </Grid>
+
+
+        
     </Grid>
 </Page>
