@@ -149,7 +149,7 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             if (testRunning)
             {
-                MWR.plc.Writeline(MWR.OPERATION_ESTOP);
+                MWR.plc.Writeline(MWR.MODE_EXIT);
             }
 
             else // test not running

@@ -38,8 +38,6 @@ namespace NoiseBarrierTesterAppV1.Pages
             SetupPlots();
 
             forceTable.ItemsSource = LoadForceTable();
-
-            Console.WriteLine(MWR.PLCBaudRate);
         }
 
         private void SetupPlots()

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -20,7 +21,7 @@ namespace NoiseBarrierTesterAppV1
     /// </summary>
     public partial class MainWindow : Window
     {
-        bool showDebugMessages = true;
+        bool showDebugMessages = false;
 
         #region Operating Mode and Mode Strings
         // Operating Mode and Mode Strings
@@ -69,7 +70,7 @@ namespace NoiseBarrierTesterAppV1
         #region PLC Settings
         // PLC Instance and Settings
         public PLC plc;
-        string PLCPort = "COM6";
+        string PLCPort = "COM5";
         public int PLCBaudRate = 115200;
 
         bool communicateWithPLC = true;
@@ -81,11 +82,10 @@ namespace NoiseBarrierTesterAppV1
         UInt16 dataHistoryDuration;
         UInt16 plcReportingInterval = 200; // Time between each PLC message
 
-        
-
         #endregion
 
         #region Data Structs
+        // Commanded Data (from input file)
         public struct CommandedData
         {
             public List<float> timeList;
@@ -106,6 +106,7 @@ namespace NoiseBarrierTesterAppV1
         }
         public CommandedData cData;
 
+        // Measured Data (from PLC)
         public struct MeasuredData
         {
             public float plcTime;
@@ -159,7 +160,7 @@ namespace NoiseBarrierTesterAppV1
         public MeasuredData mData;
 
 
-        // Manual Mode
+        // Manual Mode Variables
         public struct ManualModeVariables
         {
             public float leftPistonPressureSetpoint;
@@ -173,7 +174,7 @@ namespace NoiseBarrierTesterAppV1
         }
         public ManualModeVariables mmVars;
 
-
+        // Tester Properties (e.g. physical limits)
         public struct TestSystemProperties
         {
             // Pressure in psi
@@ -221,6 +222,10 @@ namespace NoiseBarrierTesterAppV1
         public TestSystemProperties testSystemProperties;
         #endregion
 
+        // Output File
+        string downloadsPath = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        string tempFilePath = "\\tempOutputFile.csv";
+        OutputFile outputFile;
 
         public MainWindow()
         {
@@ -245,8 +250,10 @@ namespace NoiseBarrierTesterAppV1
             displayFrame.Navigate(_setupPage);
             onSetupButtonClick(null, null);
 
-
-
+            // Ready a new file for writing to
+            Console.WriteLine($"Working directory: {Directory.GetCurrentDirectory()}");
+            outputFile = new OutputFile(downloadsPath + tempFilePath);
+            outputFile.WriteHeaders();
 
         }
 
@@ -333,6 +340,10 @@ namespace NoiseBarrierTesterAppV1
                                     Application.Current.Dispatcher.Invoke(() => {_operationPage.RefreshPlots();
                                                                                  //_manualPage.RefreshStatusBoxes();
                                     });
+                                    outputFile.WriteData(mData.plcTime,
+                                                         mData.pressureLeft, mData.pressureRight,
+                                                         mData.forceLeft, mData.forceRight, mData.forceAverage,
+                                                         mData.distanceUp, mData.distanceDown, mData.distanceAverage);
                                     break;
 
                                 default:
@@ -349,7 +360,7 @@ namespace NoiseBarrierTesterAppV1
                     // Any other message will just be repeated to console:
                     else
                     {
-                        Console.WriteLine($"Forwarded message from plc: {msg}");
+                        Console.WriteLine($"Forwarded message from PLC: {msg}");
                     }
                 }
             }
@@ -435,6 +446,9 @@ namespace NoiseBarrierTesterAppV1
             plc.ClearIncomingBytes();
             
             plc.Disconnect();
+
+            outputFile.Close();
+            
 
             Console.WriteLine("----Program Exited----");
         }
