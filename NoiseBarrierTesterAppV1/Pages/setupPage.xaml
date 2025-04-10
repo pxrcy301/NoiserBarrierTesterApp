@@ -151,7 +151,7 @@
                     </Border>
 
                     <Border Grid.Column="4" Style="{DynamicResource defaultBorder}">
-                        <Button Content="Connect" Style="{DynamicResource defaultButton}" Click="PLCConnectBtn_Click"/>
+                        <Button Name="PLCConnectBtn" Content="Connect" Style="{DynamicResource defaultButton}" Click="PLCConnectBtn_Click"/>
                     </Border>
 
 

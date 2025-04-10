@@ -187,7 +187,23 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         private void PLCConnectBtn_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                MWR.plcReportingInterval = UInt16.Parse(ReportingIntervalTextBox.Text);
+                MWR.setupPLC(COMPortTextBox.Text);
+                PLCConnectBtn.Content = "Connected";
+                PLCConnectBtn.IsEnabled = false;
+                COMPortTextBox.IsEnabled = false;
+                ReportingIntervalTextBox.IsEnabled = false;
+                MWR.PLCConnected = true;
 
+            }
+
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error connecting to PLC: {ex.Message}");
+            }
+            
         }
     }
 }

@@ -78,19 +78,20 @@ namespace NoiseBarrierTesterAppV1
 
         #region PLC Settings
         // PLC Instance and Settings
-        public PLC plc;
+        public PLC? plc;
         string PLCPort = "COM7";
         public int PLCBaudRate = 115200;
 
         bool communicateWithPLC = true;
         public bool pausePLCCommsThread = false;
+        public bool PLCConnected = false;
 
         Thread plcCommsThread;
         #endregion
 
         #region Global Variables
         UInt16 dataHistoryDuration;
-        UInt16 plcReportingInterval = 200; // Time between each PLC message
+        public UInt16 plcReportingInterval = 200; // Time between each PLC message
 
         #endregion
 
@@ -249,7 +250,11 @@ namespace NoiseBarrierTesterAppV1
 
             setupPages();
 
-            setupPLC();
+            UITabDeselect(manualBorder);
+            UITabSelect(setupBorder);
+            UITabDeselect(operationBorder);
+
+            //setupPLC();
 
             // Disable navigation hotkeys (e.g. backspace to go to previous page)
             NavigationCommands.BrowseBack.InputGestures.Clear();
@@ -274,7 +279,7 @@ namespace NoiseBarrierTesterAppV1
         }
 
         #region PLC
-        void setupPLC()
+        public void setupPLC(string PLCPort)
         {
             // Initialize PLC Object
             plc = new PLC(PLCPort, PLCBaudRate, this);
@@ -414,48 +419,55 @@ namespace NoiseBarrierTesterAppV1
 
         private void onManualButtonClick(object? sender, RoutedEventArgs? e)
         {
-            plc.Writeline(MODE_EXIT);
-            plc.Writeline(MANUAL_MODE_ENTER);
-            operatingMode = OPERATING_MODE.MANUAL;
-            mData.ClearData();
+            if (PLCConnected)
+            {
+                plc.Writeline(MODE_EXIT);
+                plc.Writeline(MANUAL_MODE_ENTER);
+                operatingMode = OPERATING_MODE.MANUAL;
+                mData.ClearData();
 
-            UITabSelect(manualBorder);
-            UITabDeselect(setupBorder);
-            UITabDeselect(operationBorder);
+                UITabSelect(manualBorder);
+                UITabDeselect(setupBorder);
+                UITabDeselect(operationBorder);
 
-            displayFrame.Navigate(_manualPage);
+                displayFrame.Navigate(_manualPage);
+            }
+            
         }
 
         private void onSetupButtonClick(object? sender, RoutedEventArgs? e)
         {
-            plc.Writeline(MODE_EXIT);
-            operatingMode = OPERATING_MODE.SELECT;
-            mData.ClearData();
+            if (PLCConnected)
+            {
+                plc.Writeline(MODE_EXIT);
 
-            UITabDeselect(manualBorder);
-            UITabSelect(setupBorder);
-            UITabDeselect(operationBorder);
+                operatingMode = OPERATING_MODE.SELECT;
+                mData.ClearData();
 
-            displayFrame.Navigate(_setupPage);
+                UITabDeselect(manualBorder);
+                UITabSelect(setupBorder);
+                UITabDeselect(operationBorder);
+
+                displayFrame.Navigate(_setupPage);
+            }
+            
         }
 
         private void onOperationButtonClick(object? sender, RoutedEventArgs? e)
         {
-            plc.Writeline(MODE_EXIT);
-            plc.Writeline(OPERATION_MODE_ENTER);
-            operatingMode = OPERATING_MODE.OPERATION;
-            mData.ClearData();  
+            if (PLCConnected)
+            {
+                plc.Writeline(MODE_EXIT);
+                plc.Writeline(OPERATION_MODE_ENTER);
+                operatingMode = OPERATING_MODE.OPERATION;
+                mData.ClearData();
 
-            UITabDeselect(manualBorder);
-            UITabDeselect(setupBorder);
-            UITabSelect(operationBorder);
+                UITabDeselect(manualBorder);
+                UITabDeselect(setupBorder);
+                UITabSelect(operationBorder);
 
-            displayFrame.Navigate(_operationPage);
-
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+                displayFrame.Navigate(_operationPage);
+            }          
 
         }
         #endregion
@@ -463,15 +475,19 @@ namespace NoiseBarrierTesterAppV1
         private void onMainWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
             communicateWithPLC = false;
-            plc.Writeline("MODE_EXIT");
-            plc.ClearIncomingBytes();
-            
-            plc.Disconnect();
+            if (PLCConnected)
+            {
+                plc.Writeline("MODE_EXIT");
+                plc.ClearIncomingBytes();
+
+                plc.Disconnect();
+            }
 
             tempOutputFile.Close();
-            
+
 
             Console.WriteLine("----Program Exited----");
+
         }
 
         private void debugPrint(string message)
