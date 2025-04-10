@@ -69,6 +69,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceRightList).LegendText = "Right, Measured (lbf)";
             forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceLeftList).LegendText = "Left, Commanded (lbf)";
             forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceRightList).LegendText = "Right, Commanded (lbf)";
+            forceTimePlot.Plot.Legend.Alignment = Alignment.UpperLeft;
 
             forceTimePlot.Plot.Axes.AutoScale();
             forceTimePlot.Plot.ShowLegend();
@@ -82,6 +83,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceUpList).LegendText = "Upper, Measured (in)";
             deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceDownList).LegendText = "Lower, Measured (in)";
             deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceAverageList).LegendText = "Average, Measured (in)";
+            deflectionTimePlot.Plot.Legend.Alignment = Alignment.UpperLeft;
 
             deflectionTimePlot.Plot.Axes.AutoScale();
             deflectionTimePlot.Plot.ShowLegend();
@@ -104,17 +106,20 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             PressureLeftTextBlock.Text = $"{MWR.mData.pressureLeft} psi";
             PressureRightTextBlock.Text = $"{MWR.mData.pressureRight} psi";
+            ForceLeftTextBlock.Text = $"{MWR.mData.forceLeft} lbf";
+            ForceRightTextBlock.Text = $"{MWR.mData.forceRight} lbf";
             DistanceUpperTextBlock.Text = $"{MWR.mData.distanceUpper} in";
             DistanceLowerTextBlock.Text = $"{MWR.mData.distanceLower} in";
 
             PressureLeftMaxTextBlock.Text = $"{MWR.mData.pressureLeftMax} psi MAX";
             PressureRightMaxTextBlock.Text = $"{MWR.mData.pressureRightMax} psi MAX";
+            ForceLeftMaxTextBlock.Text = $"{MWR.mData.forceLeftMax} lbf MAX";
+            ForceRightMaxTextBlock.Text = $"{MWR.mData.forceRightMax} lbf MAX";
             DistanceUpperMaxTextBlock.Text = $"{MWR.mData.distanceUpperMax} in MAX";
             DistanceLowerMaxTextBlock.Text = $"{MWR.mData.distanceLowerMax} in MAX";
-
         }
 
-        private void startStopBtn_Click(object sender, RoutedEventArgs e)
+        private void StartStopBtn_Click(object sender, RoutedEventArgs e)
         {
             // Code for Stopping Test
             if (testRunning)
@@ -142,16 +147,18 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         }
 
-        private void pauseResumeBtn_Click(object sender, RoutedEventArgs e)
+        private void PauseResumeBtn_Click(object sender, RoutedEventArgs e)
         {
             if (testPaused)
             {
                 MWR.plc.Writeline(MWR.OPERATION_RESUME);
+                pauseResumeBtn.Content = "Pause";
             }
 
             else // test not paused
             {
                 MWR.plc.Writeline(MWR.OPERATION_PAUSE);
+                pauseResumeBtn.Content = "Resume";
             }
 
             testPaused = !testPaused;

@@ -184,5 +184,10 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             rescaleTime();
         }
+
+        private void PLCConnectBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

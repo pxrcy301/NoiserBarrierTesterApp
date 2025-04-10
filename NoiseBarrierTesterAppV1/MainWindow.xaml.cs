@@ -59,6 +59,10 @@ namespace NoiseBarrierTesterAppV1
 
         public String SET_LEFT = "SET_L";
         public String SET_RIGHT = "SET_R";
+        public String RETRACT_LEFT = "RETRACT_L";
+        public String RETRACT_RIGHT = "RETRACT_R";
+        public String EXTEND_LEFT = "EXTEND_L";
+        public String EXTEND_RIGHT = "EXTEND_R";
 
         public String EXCHANGE_DATAPOINTS_REQUEST = "EXCH_DP_REQ";
         public String EXCHANGE_DATAPOINTS_TERMINATION = "EXCH_DP_TERM";
@@ -273,7 +277,7 @@ namespace NoiseBarrierTesterAppV1
         void setupPLC()
         {
             // Initialize PLC Object
-            plc = new PLC(PLCPort, PLCBaudRate);
+            plc = new PLC(PLCPort, PLCBaudRate, this);
             plc.Connect();
             plc.ClearIncomingBytes();
 

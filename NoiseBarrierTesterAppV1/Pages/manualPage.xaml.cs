@@ -24,6 +24,8 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         readonly MainWindow MWR; // Main Window Reference
         bool syncInputs = true;
+        bool leftPistonExtended = false;
+        bool rightPistonExtended = false;
 
         public manualPage(MainWindow referenceInstance)
         {
@@ -73,7 +75,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             LeftPistonSetpointTextBlock.Text = $"{MWR.mmVars.leftPistonPressureSetpoint.ToString("F1")} psi";
             RightPistonSetpointTextBlock.Text = $"{MWR.mmVars.rightPistonPressureSetpoint.ToString("F1")} psi";
             LeftPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
-            RightPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
+            RightPistonPressureTextBlock.Text = $"{MWR.mData.pressureRight.ToString("F1")} psi";
         }
 
         #region Pressure Adjustment Button Functions
@@ -201,5 +203,73 @@ namespace NoiseBarrierTesterAppV1.Pages
                 ModeTextBlock.Text = "Async";
             }
         }
+
+        private void LeftDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // If piston extended, retract it
+            if (leftPistonExtended)
+            {
+                MWR.plc.RetractLeft();
+                LeftPistonDirectionTextBlock.Text = "Retracted";
+                leftPistonExtended = false;
+
+                if (syncInputs)
+                {
+                    MWR.plc.RetractRight();
+                    RightPistonDirectionTextBlock.Text = "Retracted";
+                    rightPistonExtended = false;
+                }
+            }
+
+            // Piston is retracted, extend it
+            else
+            {
+                MWR.plc.ExtendLeft();
+                LeftPistonDirectionTextBlock.Text = "Extended";
+                leftPistonExtended = true;
+
+                if (syncInputs)
+                {
+                    MWR.plc.ExtendRight();
+                    RightPistonDirectionTextBlock.Text = "Extended";
+                    rightPistonExtended = true;
+                }
+            }
+        }
+
+        private void RightDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // If piston extended, retract it
+            if (rightPistonExtended)
+            {
+                MWR.plc.RetractRight();
+                RightPistonDirectionTextBlock.Text = "Retracted";
+                rightPistonExtended = false;
+
+                if (syncInputs)
+                {
+                    MWR.plc.RetractLeft();
+                    LeftPistonDirectionTextBlock.Text = "Retracted";
+                    leftPistonExtended = false;
+                }
+            }
+
+            // Piston is retracted, extend it
+            else
+            {
+                MWR.plc.ExtendRight();
+                RightPistonDirectionTextBlock.Text = "Extended";
+                rightPistonExtended = true;
+
+                if (syncInputs)
+                {
+                    MWR.plc.ExtendLeft();
+                    LeftPistonDirectionTextBlock.Text = "Extended";
+                    leftPistonExtended = true;
+                }
+            }
+        }
+
+
     }
 }

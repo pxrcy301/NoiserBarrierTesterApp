@@ -48,10 +48,10 @@
                     <!--Project No. and Sample Name-->
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15*"/>
-                            <ColumnDefinition Width="35*"/>
-                            <ColumnDefinition Width="15*"/>
-                            <ColumnDefinition Width="35*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="30*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="30*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Project No." Style="{DynamicResource fieldLabelTextBlock}"/>
@@ -67,10 +67,10 @@
                     <!--Model-->
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15*"/>
-                            <ColumnDefinition Width="35*"/>
-                            <ColumnDefinition Width="15*"/>
-                            <ColumnDefinition Width="35*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="30*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="30*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Height (ft)" Style="{DynamicResource fieldLabelTextBlock}"/>
@@ -88,8 +88,8 @@
                     <!--Date-->
                     <Grid Grid.Row="3" Height="74" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15*"/>
-                            <ColumnDefinition Width="85*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="80*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Date" Style="{DynamicResource fieldLabelTextBlock}"/>
@@ -109,7 +109,7 @@
 
                 <!--Guide Message-->
                 <Border Grid.Row="2" Style="{DynamicResource defaultBorder}" BorderBrush="Transparent">
-                    <TextBlock Text="Status Message Text" Style="{DynamicResource descriptionTextBlock}"/>
+                    <TextBlock Text='Press "Connect" to connect to the PLC.' Style="{DynamicResource descriptionTextBlock}"/>
                 </Border>
             </Grid>
             
@@ -128,19 +128,36 @@
                     <RowDefinition Height="8*"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Force Profile" FontSize="40" FontWeight="SemiBold"/>
-             
+                <TextBlock Grid.Column="0" Text="PLC Connection Settings" FontSize="40" FontWeight="SemiBold"/>
+                    
                 
-                <TextBlock Grid.Row="1" Text="Independent Piston Control" Style="{DynamicResource fieldLabelTextBlock}"/>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
 
-                    <RadioButton Grid.Column="0" GroupName="pistonControl" Style="{DynamicResource defaultRadioButton}">Sync</RadioButton>
-                    <RadioButton Grid.Column="1" GroupName="pistonControl" Style="{DynamicResource defaultRadioButton}">Independent</RadioButton>
+                    <TextBlock Grid.Column="0" Text='COM Port (e.g. "COM6")' Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="COMPortTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                    </Border>
+
+                    <TextBlock Grid.Column="2" Text='Reporting Interval (ms)' Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="ReportingIntervalTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                    </Border>
+
+                    <Border Grid.Column="4" Style="{DynamicResource defaultBorder}">
+                        <Button Content="Connect" Style="{DynamicResource defaultButton}" Click="PLCConnectBtn_Click"/>
+                    </Border>
+
+
                 </Grid>
+
+                <TextBlock Grid.Row="2" Text="Force Profile" FontSize="40" FontWeight="SemiBold"/>
 
                 <Grid Grid.Row ="3">
                         <Grid.ColumnDefinitions>

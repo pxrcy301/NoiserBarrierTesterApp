@@ -13,12 +13,14 @@ namespace NoiseBarrierTesterAppV1
     {
 
         public SerialPort serialObject;
+        public MainWindow MWR;
 
-        public PLC(string port, int baudRate)
+        public PLC(string port, int baudRate, MainWindow MWR)
         {
             this.serialObject = new SerialPort(port, baudRate);
             this.serialObject.ReadTimeout = 3000;
             this.serialObject.WriteTimeout = 3000;
+            this.MWR = MWR;
         }
 
         public bool Connect()
@@ -143,6 +145,62 @@ namespace NoiseBarrierTesterAppV1
                 return false;
             }
             
+        }
+
+        public bool RetractLeft()
+        {
+            try
+            {
+                this.Writeline(this.MWR.RETRACT_LEFT);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.RetractLeft(): {ex}");
+                return false;
+            }
+        }
+
+        public bool RetractRight()
+        {
+            try
+            {
+                this.Writeline(this.MWR.RETRACT_RIGHT);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.RetractRight(): {ex}");
+                return false;
+            }
+        }
+
+        public bool ExtendLeft()
+        {
+            try
+            {
+                this.Writeline(this.MWR.EXTEND_LEFT);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.ExtendLeft(): {ex}");
+                return false;
+            }
+        }
+
+        public bool ExtendRight()
+        {
+            try
+            {
+                this.Writeline(this.MWR.EXTEND_RIGHT);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.ExtendRight(): {ex}");
+                return false;
+            }
         }
         public bool ReceiveData(ref float plcTime, 
                                 ref float pressureLeft, ref float pressureRight,

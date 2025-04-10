@@ -35,8 +35,9 @@
             <Border Grid.Column="0" BorderThickness="20" BorderBrush="Transparent">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70*"/>
-                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
                     </Grid.ColumnDefinitions>
                     <!-- Numerical Data -->
                     <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
@@ -99,9 +100,29 @@
                             <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}" Click="LeftPistonMinus5Btn_Click"/>
                         </Border>
                     </Grid>
+
+                    <!-- Direction -->
+                    <Border Grid.Column="2" BorderThickness="0,0,0,0" BorderBrush="Transparent">
+                        <Border Style="{StaticResource defaultBorder}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Direction (L)" Style="{StaticResource headerTextBlock}"/>
+                                <TextBlock Grid.Row="1" Name ="LeftPistonDirectionTextBlock" Text="Retracted" Style="{StaticResource descriptionTextBlock}"/>
+                                <Button Grid.Row="2" Content="🗘" Style="{StaticResource defaultButton}" Click="LeftDirectionSwitchBtn_Click"/>
+                            </Grid>
+                        </Border>
+                    </Border>
+                    
                 </Grid>
             </Border>
+
             
+
             <!-- Sync Button-->
             <Border Grid.Column="1" BorderThickness="0,20,0,20" BorderBrush="Transparent">
                 <Border Style="{StaticResource defaultBorder}">
@@ -112,7 +133,7 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Mode:" Style="{StaticResource headerTextBlock}"/>
+                        <TextBlock Grid.Row="0" Text="Mode" Style="{StaticResource headerTextBlock}"/>
                         <TextBlock Grid.Row="1" Name ="ModeTextBlock" Text="Sync" Style="{StaticResource descriptionTextBlock}"/>
                         <Button Grid.Row="2" Content="🗘" Style="{StaticResource defaultButton}" Click="ModeSwitchBtn_Click"/>
                     </Grid>
@@ -122,8 +143,9 @@
             <Border Grid.Column="2" BorderThickness="20" BorderBrush="Transparent">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70*"/>
-                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="25*"/>
                     </Grid.ColumnDefinitions>
                     <!-- Numerical Data -->
                     <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
@@ -186,6 +208,23 @@
                             <Button Content="⮟ 5 psi" Style="{StaticResource defaultButton}" Click="RightPistonMinus5Btn_Click"/>
                         </Border>
                     </Grid>
+
+                    <!-- Direction -->
+                    <Border Grid.Column="2" BorderThickness="0,0,0,0" BorderBrush="Transparent">
+                        <Border Style="{StaticResource defaultBorder}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Direction (R)" Style="{StaticResource headerTextBlock}"/>
+                                <TextBlock Grid.Row="1" Name ="RightPistonDirectionTextBlock" Text="Retracted" Style="{StaticResource descriptionTextBlock}"/>
+                                <Button Grid.Row="2" Content="🗘" Style="{StaticResource defaultButton}" Click="RightDirectionSwitchBtn_Click"/>
+                            </Grid>
+                        </Border>
+                    </Border>
                 </Grid>
             </Border>
         </Grid>

@@ -78,13 +78,14 @@
         <!--Left Column-->
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="60*"/>
+                <RowDefinition Height="40*"/>
             </Grid.RowDefinitions>
             
             <!--Upper Left Column-->
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition/>
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
@@ -150,13 +151,56 @@
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
+                            <TextBlock Grid.Row="1" Text="Left Piston Force" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name ="ForceLeftTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name="ForceLeftMaxTextBlock" Text="XX.X lbf MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+
+                    <!--Piston 2-->
+                    <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="1" Text="Right Piston Force" Style="{StaticResource headerTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name="ForceRightTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="3" Name="ForceRightMaxTextBlock" Text="XX.X lbf MAX" Style="{StaticResource dataTextBlock}"/>
+                        </Grid>
+                    </Border>
+
+                </Grid>
+
+                <!--Status Indicators Row 3-->
+                <Grid Grid.Row ="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--String Gauge 1-->
+                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="5*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="5*"/>
+                            </Grid.RowDefinitions>
+
                             <TextBlock Grid.Row="1" Text="String Gauge 1" Style="{StaticResource headerTextBlock}"/>
                             <TextBlock Grid.Row="2" Name="DistanceUpperTextBlock" Text="XX.X in" Style="{StaticResource dataTextBlock}"/>
                             <TextBlock Grid.Row="3" Name="DistanceUpperMaxTextBlock" Text="XX.X in MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
 
-                    <!--Piston 2-->
+                    <!--String Gauge 2-->
                     <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -174,7 +218,10 @@
                     </Border>
                 </Grid>
                 
+                
+                
             </Grid>
+            
             
             <!--Lower Left Column-->
             <Grid Grid.Row="1">
@@ -192,11 +239,11 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
-                        <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButton}" Click="startStopBtn_Click"/>
+                        <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButton}" Click="StartStopBtn_Click"/>
                     </Border>
 
                     <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
-                        <Button Name="pauseResumeBtn" Content="pauseResume Placeholder" Style="{StaticResource defaultButton}" Click="pauseResumeBtn_Click"/>
+                        <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButton}" Click="PauseResumeBtn_Click"/>
                     </Border>
 
                 </Grid>
