@@ -39,40 +39,37 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         private void SetupPlots()
         {
-            leftPistonPlot.Plot.Axes.Title.Label.Text = "Pressure-Time";
+            leftPistonPlot.Plot.Axes.Title.Label.Text = "Left Piston and Upper String Gauge";
             leftPistonPlot.Plot.Axes.Left.Label.Text = "Pressure [psi]";
+            leftPistonPlot.Plot.Axes.Right.Label.Text = "Force [lbf], Deflection [mm]";
             leftPistonPlot.Plot.Axes.Bottom.Label.Text = "Time [s]"; ;
             leftPistonPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
 
-            rightPistonPlot.Plot.Axes.Title.Label.Text = "Pressure-Time";
+            rightPistonPlot.Plot.Axes.Title.Label.Text = "Right Piston and Lower String Gauge";
             rightPistonPlot.Plot.Axes.Left.Label.Text = "Pressure [psi]";
+            rightPistonPlot.Plot.Axes.Right.Label.Text = "Force [lbf], Deflection [mm]";
             rightPistonPlot.Plot.Axes.Bottom.Label.Text = "Time [s]"; ;
             rightPistonPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
         }
 
         public void RefreshPlots()
         {
+            int dpStart = Math.Max(MWR.mmVars.plcTimeList.Count - MWR.testSystemProperties.datapointsGraphed, 0);
+            int dpQty = Math.Min(MWR.testSystemProperties.datapointsGraphed, MWR.mmVars.plcTimeList.Count);
+
+
             leftPistonPlot.Plot.Clear();
-            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftList).LegendText = "Pressure, Left (psi)";
-            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftSetpointList).LegendText = "Pressure Setpoint, Left (psi)";
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Left (psi)";
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Left (psi)";
           
             rightPistonPlot.Plot.Clear();
-            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightList).LegendText = "Pressure, Right (psi)";
-            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightSetpointList).LegendText = "Pressure Setpoint, Right (psi)";
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Right (psi)";
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Right (psi)";
 
-            if (ForcesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
+            if(ForcesCheckBox.IsChecked == true || DistancesCheckBox.IsChecked == true)
             {
                 leftPistonPlot.Plot.Axes.Right.IsVisible = true;
                 rightPistonPlot.Plot.Axes.Right.IsVisible = true;
-
-                var forceLeftPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceLeftList);
-                var forceRightPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceRightList);
-
-                forceLeftPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
-                forceRightPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
-
-                forceLeftPlot.LegendText = "Force, Left (lbf)";
-                forceRightPlot.LegendText = "Force, Right (lbf)";
             }
 
             else
@@ -81,10 +78,31 @@ namespace NoiseBarrierTesterAppV1.Pages
                 rightPistonPlot.Plot.Axes.Right.IsVisible = false;
             }
 
+            if (ForcesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
+            {
+
+
+                var forceLeftPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceLeftList.GetRange(dpStart, dpQty));
+                var forceRightPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceRightList.GetRange(dpStart, dpQty));
+
+                forceLeftPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
+                forceRightPlot.Axes.YAxis = rightPistonPlot.Plot.Axes.Right;
+
+                forceLeftPlot.LegendText = "Force, Left (lbf)";
+                forceRightPlot.LegendText = "Force, Right (lbf)";
+            }
+
+
             if (DistancesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
             {
-                leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceUpperList).LegendText = "Deflection, Upper (in)";
-                rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceLowerList).LegendText = "Deflection, Lower (in)";
+                var distancesUpperPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceUpperList.GetRange(dpStart, dpQty));
+                var distancesLowerPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceLowerList.GetRange(dpStart, dpQty));
+
+                distancesUpperPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
+                distancesLowerPlot.Axes.YAxis = rightPistonPlot.Plot.Axes.Right;
+
+                distancesUpperPlot.LegendText = "Deflection, Upper (mm)";
+                distancesLowerPlot.LegendText = "Deflection, Lower (mm)";
             }
 
 

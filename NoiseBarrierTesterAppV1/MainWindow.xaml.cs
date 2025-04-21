@@ -56,6 +56,7 @@ namespace NoiseBarrierTesterAppV1
         public String OPERATION_PAUSE = "O_PAUSE";
         public String OPERATION_RESUME = "O_RESUME";
         public String OPERATION_ESTOP = "O_ESTOP";
+        public String OPERATION_COMPLETE = "TEST_COMPLETE";
 
         public String SET_LEFT = "SET_L";
         public String SET_RIGHT = "SET_R";
@@ -66,6 +67,7 @@ namespace NoiseBarrierTesterAppV1
 
         public String EXCHANGE_DATAPOINTS_REQUEST = "EXCH_DP_REQ";
         public String EXCHANGE_DATAPOINTS_TERMINATION = "EXCH_DP_TERM";
+        
 
         #endregion
 
@@ -260,6 +262,7 @@ namespace NoiseBarrierTesterAppV1
 
             // Reporting rate in ms
             public UInt16 plcReportingIntervalMin;
+            public UInt16 datapointsGraphed;
 
             public TestSystemProperties()
             {
@@ -268,6 +271,7 @@ namespace NoiseBarrierTesterAppV1
                 this.maxForce = 5000; // lbf
                 this.minForce = 0;
                 this.plcReportingIntervalMin = 50;
+                this.datapointsGraphed = 500;
             }
 
             public void ApplyPressureLimits(ref float pressure)
@@ -474,6 +478,15 @@ namespace NoiseBarrierTesterAppV1
                     }
                     #endregion
 
+                    
+                    else if(msg == OPERATION_COMPLETE && _operationPage.testRunning)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            _operationPage.StartStopBtn_Click(null, null);
+                        });
+                    }
+
                     // Any other message will just be repeated to console:
                     else
                     {
@@ -517,6 +530,38 @@ namespace NoiseBarrierTesterAppV1
             operationBtn.IsEnabled = true;
             setupBtn.IsEnabled = true;
         }
+
+        public void EnableSetupTab()
+        {
+            setupBorder.Background = (Brush)Application.Current.MainWindow.FindResource("PrimaryColor");
+            setupBtn.IsEnabled = true;
+        }
+
+        public void DisableManualTab()
+        {
+            manualBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+            manualBtn.IsEnabled = false;
+        }
+
+        public void DisableSetupTab()
+        {
+            setupBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+            setupBtn.IsEnabled = false;
+        }
+
+        public void DisableOperationButton()
+        {
+            operationBtn.IsEnabled = false;
+        }
+
+        public void EnableOperationButton()
+        {
+            operationBtn.IsEnabled = true;
+        }
+
+
+
+
 
 
         private void UITabSelect(System.Windows.Controls.Border border)
@@ -567,12 +612,11 @@ namespace NoiseBarrierTesterAppV1
             plc.Writeline(MODE_EXIT);
             plc.Writeline(OPERATION_MODE_ENTER);
             operatingMode = OPERATING_MODE.OPERATION;
-            mData.ClearData();
-            mmVars.ClearData();
 
             if (manualBtn.IsEnabled == true) { UITabDeselect(manualBorder); }
             if (setupBtn.IsEnabled == true) { UITabDeselect(setupBorder); }
             UITabSelect(operationBorder);
+            _operationPage.RefreshPlots();
 
             displayFrame.Navigate(_operationPage);        
         }
@@ -587,6 +631,11 @@ namespace NoiseBarrierTesterAppV1
                 plc.ClearIncomingBytes();
 
                 plc.Disconnect();
+
+                if(operatingMode != OPERATING_MODE.SELECT)
+                {
+                    SetupBtn_Click(null, null);
+                }
             }
 
             tempOutputFile.Close();

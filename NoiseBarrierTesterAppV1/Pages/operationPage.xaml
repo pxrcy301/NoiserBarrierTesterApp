@@ -103,13 +103,13 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="Left Piston Pressure" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name ="PressureLeftTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name ="PressureLeftTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlockLarge}"/>
                             <TextBlock Grid.Row="3" Name="PressureLeftMaxTextBlock" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
@@ -120,13 +120,13 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="Right Piston Pressure" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name="PressureRightTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name="PressureRightTextBlock" Text="XX.X psi" Style="{StaticResource dataTextBlockLarge}"/>
                             <TextBlock Grid.Row="3" Name="PressureRightMaxTextBlock" Text="XX.X psi MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
@@ -146,13 +146,13 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="Left Piston Force" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name ="ForceLeftTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name ="ForceLeftTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlockLarge}"/>
                             <TextBlock Grid.Row="3" Name="ForceLeftMaxTextBlock" Text="XX.X lbf MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
@@ -163,13 +163,13 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="Right Piston Force" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name="ForceRightTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" Name="ForceRightTextBlock" Text="XX.X lbf" Style="{StaticResource dataTextBlockLarge}"/>
                             <TextBlock Grid.Row="3" Name="ForceRightMaxTextBlock" Text="XX.X lbf MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
@@ -189,14 +189,14 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="String Gauge 1" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name="DistanceUpperTextBlock" Text="XX.X in" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Name="DistanceUpperMaxTextBlock" Text="XX.X in MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" x:Name="DistanceUpperTextBlock" Style="{StaticResource dataTextBlockLarge}"><Run Text="XX.X "/><Run Language="en-ca" Text="mm"/></TextBlock>
+                            <TextBlock Grid.Row="3" Name="DistanceUpperMaxTextBlock" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
 
@@ -206,14 +206,14 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="5*"/>
                                 <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
-                                <RowDefinition Height="30*"/>
+                                <RowDefinition Height="45*"/>
+                                <RowDefinition Height="15*"/>
                                 <RowDefinition Height="5*"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="1" Text="String Gauge 2" Style="{StaticResource headerTextBlock}"/>
-                            <TextBlock Grid.Row="2" Name ="DistanceLowerTextBlock" Text="XX.X in" Style="{StaticResource dataTextBlock}"/>
-                            <TextBlock Grid.Row="3" Name ="DistanceLowerMaxTextBlock" Text="XX.X in MAX" Style="{StaticResource dataTextBlock}"/>
+                            <TextBlock Grid.Row="2" x:Name ="DistanceLowerTextBlock" Style="{StaticResource dataTextBlockLarge}"><Run Text="XX.X "/><Run Language="en-ca" Text="mm"/></TextBlock>
+                            <TextBlock Grid.Row="3" Name ="DistanceLowerMaxTextBlock" Text="XX.X mm MAX" Style="{StaticResource dataTextBlock}"/>
                         </Grid>
                     </Border>
                 </Grid>
@@ -230,7 +230,7 @@
                     <RowDefinition Height="35*"/>
                     <RowDefinition Height="20*"/>
                 </Grid.RowDefinitions>
-                
+
                 <!--Process Control Buttons-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -239,11 +239,11 @@
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
-                        <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButton}" Click="StartStopBtn_Click"/>
+                        <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButtonLarge}" Click="StartStopBtn_Click"/>
                     </Border>
 
                     <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
-                        <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButton}" Click="PauseResumeBtn_Click"/>
+                        <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButtonLarge}" Click="PauseResumeBtn_Click"/>
                     </Border>
 
                 </Grid>
@@ -251,13 +251,12 @@
                 <Border Grid.Row="1" Style="{StaticResource defaultBorder}">
                     <TextBlock Name="statusMessage" Text="Guide/Status Message" Style="{StaticResource descriptionTextBlock}"/>
                 </Border>
-                
+
                 <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
-                    <Button Name="ExportDataBtn" Content="Export Data" Style="{StaticResource defaultButton}" Click="ExportDataBtn_Click"/>
+                    <Button Name="ExportDataBtn" Content="Export Data" Style="{StaticResource defaultButtonLarge}" Click="ExportDataBtn_Click"/>
                 </Border>
 
             </Grid>
-
         </Grid>
 
         <!--Right Column-->

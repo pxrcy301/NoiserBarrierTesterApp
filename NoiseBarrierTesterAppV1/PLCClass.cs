@@ -235,6 +235,9 @@ namespace NoiseBarrierTesterAppV1
                 forceRight = float.Parse(CSM[4]);
                 distanceUp = float.Parse(CSM[5]);
                 distanceDown = float.Parse(CSM[6]);
+
+                Console.WriteLine($"{plcTime},{pressureLeft},{pressureRight},{forceLeft},{forceRight},{distanceUp},{distanceDown}");
+
                 return true;
             }
             catch (Exception ex)

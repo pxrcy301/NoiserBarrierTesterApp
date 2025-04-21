@@ -133,13 +133,16 @@ namespace NoiseBarrierTesterAppV1.Pages
                             MWR.cData.forceRightList.Add(float.Parse(lineSplit[2]));
                             Console.WriteLine(line);
                         }
-
                     }
 
                     // 3. Update forceTable and Plot
                     RescaleTime();
                     RefreshForcePlot();
                     RefreshForceTable();
+
+                    // 4. Enable operation tab since the operation was successful
+                    forceProfileLoaded = true;
+                    refreshSetupStatus();
 
                     Console.WriteLine("Done");
                 }
@@ -262,7 +265,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.EnableManualTab();
             }
 
-            else
+            else if(!plcConnected)
             {
                 GuideTextBlock.Text = "Please connect to the PLC.";
                 return;

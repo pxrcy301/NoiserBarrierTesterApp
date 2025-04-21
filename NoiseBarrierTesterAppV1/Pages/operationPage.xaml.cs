@@ -24,7 +24,7 @@ namespace NoiseBarrierTesterAppV1.Pages
     /// </summary>
     public partial class operationPage : Page
     {
-        bool testRunning = false;
+        public bool testRunning = false;
         bool testPaused = false;
         ScottPlot.Color[] paletteColors = { ScottPlot.Colors.Blue, ScottPlot.Colors.Green, ScottPlot.Colors.Green };
 
@@ -39,12 +39,13 @@ namespace NoiseBarrierTesterAppV1.Pages
             NavigationCommands.BrowseBack.InputGestures.Clear();
             NavigationCommands.BrowseForward.InputGestures.Clear();
             SetupPlots();
+            // RefreshPlots();
         }
 
         private void SetupPlots()
         {
             forceTimePlot.Plot.Axes.Title.Label.Text = "Force-Time";
-            forceTimePlot.Plot.Axes.Left.Label.Text = "Force [N]";
+            forceTimePlot.Plot.Axes.Left.Label.Text = "Force [lbf]";
             forceTimePlot.Plot.Axes.Bottom.Label.Text = "Time [s]"; ;
             forceTimePlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
 
@@ -54,8 +55,8 @@ namespace NoiseBarrierTesterAppV1.Pages
             deflectionTimePlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
 
             forceDeflectionPlot.Plot.Axes.Title.Label.Text = "Force-Deflection";
-            forceDeflectionPlot.Plot.Axes.Left.Label.Text = "Force [N]";
-            forceDeflectionPlot.Plot.Axes.Bottom.Label.Text = "Deflection [mm]"; ;
+            forceDeflectionPlot.Plot.Axes.Left.Label.Text = "Force [lbf]";
+            forceDeflectionPlot.Plot.Axes.Bottom.Label.Text = "Deflection [mm]";
             forceDeflectionPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
 
         }
@@ -67,8 +68,8 @@ namespace NoiseBarrierTesterAppV1.Pages
 
             forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceLeftList).LegendText = "Left, Measured (lbf)";
             forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceRightList).LegendText = "Right, Measured (lbf)";
-            forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceLeftList).LegendText = "Left, Commanded (lbf)";
-            forceTimePlot.Plot.Add.Scatter(MWR.cData.timeList, MWR.cData.forceRightList).LegendText = "Right, Commanded (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceLeftList).LegendText = "Left, Commanded (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceRightList).LegendText = "Right, Commanded (lbf)";
             forceTimePlot.Plot.Legend.Alignment = Alignment.UpperLeft;
 
             forceTimePlot.Plot.Axes.AutoScale();
@@ -94,7 +95,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             // Force-Deflection PLot
             forceDeflectionPlot.Plot.Clear();
 
-            forceDeflectionPlot.Plot.Add.Scatter(MWR.mData.forceAverageList, MWR.mData.distanceAverageList);
+            forceDeflectionPlot.Plot.Add.Scatter(MWR.mData.distanceAverageList, MWR.mData.forceAverageList).LineStyle = LineStyle.None;
 
             forceDeflectionPlot.Plot.Axes.AutoScale();
 
@@ -108,24 +109,33 @@ namespace NoiseBarrierTesterAppV1.Pages
             PressureRightTextBlock.Text = $"{MWR.mData.pressureRight} psi";
             ForceLeftTextBlock.Text = $"{MWR.mData.forceLeft} lbf";
             ForceRightTextBlock.Text = $"{MWR.mData.forceRight} lbf";
-            DistanceUpperTextBlock.Text = $"{MWR.mData.distanceUpper} in";
-            DistanceLowerTextBlock.Text = $"{MWR.mData.distanceLower} in";
+            DistanceUpperTextBlock.Text = $"{MWR.mData.distanceUpper} mm";
+            DistanceLowerTextBlock.Text = $"{MWR.mData.distanceLower} mm";
 
             PressureLeftMaxTextBlock.Text = $"{MWR.mData.pressureLeftMax} psi MAX";
             PressureRightMaxTextBlock.Text = $"{MWR.mData.pressureRightMax} psi MAX";
             ForceLeftMaxTextBlock.Text = $"{MWR.mData.forceLeftMax} lbf MAX";
             ForceRightMaxTextBlock.Text = $"{MWR.mData.forceRightMax} lbf MAX";
-            DistanceUpperMaxTextBlock.Text = $"{MWR.mData.distanceUpperMax} in MAX";
-            DistanceLowerMaxTextBlock.Text = $"{MWR.mData.distanceLowerMax} in MAX";
+            DistanceUpperMaxTextBlock.Text = $"{MWR.mData.distanceUpperMax} mm MAX";
+            DistanceLowerMaxTextBlock.Text = $"{MWR.mData.distanceLowerMax} mm MAX";
         }
 
-        private void StartStopBtn_Click(object sender, RoutedEventArgs e)
+        public void StartStopBtn_Click(object sender, RoutedEventArgs e)
         {
             // Code for Stopping Test
             if (testRunning)
             {
-                MWR.plc.Writeline(MWR.MODE_EXIT);
+                if (sender != null)
+                {
+                    MWR.plc.Writeline(MWR.OPERATION_ESTOP);
+                }
+                
                 startStopBtn.Content = "Start Test";
+
+                // Re-enable Tabs
+                MWR.EnableManualTab();
+                MWR.EnableSetupTab();
+                MWR.EnableOperationButton();
             }
 
             // Code for Starting Test
@@ -134,12 +144,17 @@ namespace NoiseBarrierTesterAppV1.Pages
                 // Prepare comms and send data to PLC
                 MWR.pausePLCCommsThread = true;
                 Thread.Sleep(50);
-                MWR.plc.SendForceDatapoints(MWR.EXCHANGE_DATAPOINTS_REQUEST, MWR.EXCHANGE_DATAPOINTS_TERMINATION, MWR.cData.timeList, MWR.cData.forceLeftList, MWR.cData.forceRightList);
+                MWR.plc.SendForceDatapoints(MWR.EXCHANGE_DATAPOINTS_REQUEST, MWR.EXCHANGE_DATAPOINTS_TERMINATION, MWR.cData.scaledTimeList, MWR.cData.forceLeftList, MWR.cData.forceRightList);
                 MWR.pausePLCCommsThread = false;
-                
+
+                // Disable Other Tabs
+                MWR.DisableManualTab();
+                MWR.DisableSetupTab();
+                MWR.DisableOperationButton();
+
                 // Start the Test
                 MWR.plc.Writeline(MWR.OPERATION_START);
-
+                MWR.mData.ClearData();
                 startStopBtn.Content = "Stop Test";
             }
 
