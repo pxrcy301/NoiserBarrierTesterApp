@@ -183,7 +183,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                     string sampleName = MWR._setupPage.SampleNameTextBox.Text;
                     string sampleHeight = MWR._setupPage.HeightTextBox.Text;
                     string sampleWidth = MWR._setupPage.WidthTextBox.Text;
-                    DateTime? selectedDateTime = MWR._setupPage.DateTimePicker.SelectedDate;
+                    DateTime? selectedDateTime = MWR._setupPage.TestDatePicker.SelectedDate;
                     string selectedDateTimeString;
 
                     if(selectedDateTime == null)

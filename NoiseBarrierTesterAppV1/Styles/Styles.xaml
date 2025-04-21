@@ -41,6 +41,16 @@
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
+    <Style x:Key="subheaderTextBlock" TargetType="{x:Type TextBlock}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="Aptos"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
     <Style x:Key="defaultBorder" TargetType="{x:Type Border}">
         <Setter Property="BorderThickness" Value="8"/>
         <Setter Property="BorderBrush" Value="#f1f2eb"/>
@@ -91,6 +101,12 @@
     <Style x:Key="defaultRadioButton" TargetType="{x:Type RadioButton}">
         <Setter Property="FontSize" Value="20"/>
         <Setter Property="HorizontalAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <Style x:Key="defaultCheckBox" TargetType="{x:Type CheckBox}">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 

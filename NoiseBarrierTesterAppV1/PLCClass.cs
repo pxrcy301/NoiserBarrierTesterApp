@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
 using System.Windows.Markup.Primitives;
+using OpenTK.Audio.OpenAL;
 
 
 namespace NoiseBarrierTesterAppV1
@@ -56,6 +57,23 @@ namespace NoiseBarrierTesterAppV1
                 Console.WriteLine("Error in Disconnect():" + ex);
                 return false;
             }
+        }
+
+        public bool UpdateReportingInterval()
+        {
+            try
+            {
+                this.Writeline(MWR.REPORTING_INTERVAL_EDIT);
+                this.Writeline(MWR.plcReportingInterval.ToString());
+                return true;
+            }
+
+            catch(Exception ex)
+            {
+                Console.WriteLine("Error in UpdatedReportingInterval():" + ex);
+                return false;
+            }
+            
         }
 
         public bool Writeline(string msg)

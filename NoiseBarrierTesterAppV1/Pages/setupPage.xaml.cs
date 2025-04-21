@@ -24,6 +24,10 @@ namespace NoiseBarrierTesterAppV1.Pages
     {
 
         readonly MainWindow MWR; // Main Window Reference
+        bool testArticleInfoComplete = false;
+        public bool plcConnected = false;
+        bool forceProfileLoaded = false;
+
 
         List<ForceTableData> forceTableDataList = new List<ForceTableData>();
 
@@ -63,16 +67,15 @@ namespace NoiseBarrierTesterAppV1.Pages
             return forceTableData;
         }
 
-        private void heightTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        private void HeightTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && HeightTextBox.Text.Contains('.')))
             {
                 e.Handled = true;
-
             }
         }
 
-        private void widthTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        private void WidthTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && WidthTextBox.Text.Contains('.')))
             {
@@ -81,12 +84,18 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
         }
 
-        private void hardLimitsButtonClick(object sender, RoutedEventArgs e)
+        private void DateTimePickTodayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TestDatePicker.SelectedDate = DateTime.Today;
+            refreshSetupStatus();
+        }
+
+        private void HardLimitsBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
 
-        private void importFromCSVClick(object sender, RoutedEventArgs e)
+        private void ImportFromCSVBtn_Click(object sender, RoutedEventArgs e)
         {
             // 1. Open file dialog to get file path
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -128,9 +137,9 @@ namespace NoiseBarrierTesterAppV1.Pages
                     }
 
                     // 3. Update forceTable and Plot
-                    rescaleTime();
-                    refreshForcePlot();
-                    refreshForceTable();
+                    RescaleTime();
+                    RefreshForcePlot();
+                    RefreshForceTable();
 
                     Console.WriteLine("Done");
                 }
@@ -142,7 +151,7 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         }
 
-        private void refreshForcePlot() 
+        private void RefreshForcePlot() 
         {
             forcePreviewPlot.Plot.Clear();
 
@@ -153,7 +162,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             forcePreviewPlot.Refresh();
         }
 
-        private void refreshForceTable()
+        private void RefreshForceTable()
         {
             forceTableDataList.Clear();
 
@@ -166,7 +175,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             forceTable.InvalidateVisual();
         }
 
-        private void rescaleTime()
+        private void RescaleTime()
         {
 
             float testSpeed = float.Parse(testSpeedTextBox.Text)/100;
@@ -177,12 +186,34 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.cData.scaledTimeList.Add((float) Math.Round(time/testSpeed,2));
             }
 
-            refreshForcePlot();
+            RefreshForcePlot();
         }
 
-        private void applyTimeScaleClick(object sender, RoutedEventArgs e)
+        private void ApplyTimeScaleBtn_Click(object sender, RoutedEventArgs e)
         {
-            rescaleTime();
+            RescaleTime();
+        }
+
+        private void ReportingIntervalTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ReportingIntervalTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if(ReportingIntervalTextBox.Text != "" && Int16.Parse(ReportingIntervalTextBox.Text) < MWR.testSystemProperties.plcReportingIntervalMin)
+            {
+                ReportingIntervalTextBox.Text = MWR.testSystemProperties.plcReportingIntervalMin.ToString();
+            }
+
+            if (plcConnected)
+            {
+                MWR.plcReportingInterval = UInt16.Parse(ReportingIntervalTextBox.Text);
+                MWR.plc.UpdateReportingInterval();
+            }
         }
 
         private void PLCConnectBtn_Click(object sender, RoutedEventArgs e)
@@ -194,9 +225,8 @@ namespace NoiseBarrierTesterAppV1.Pages
                 PLCConnectBtn.Content = "Connected";
                 PLCConnectBtn.IsEnabled = false;
                 COMPortTextBox.IsEnabled = false;
-                ReportingIntervalTextBox.IsEnabled = false;
-                MWR.PLCConnected = true;
-
+                plcConnected = true;
+                refreshSetupStatus();
             }
 
             catch(Exception ex)
@@ -205,5 +235,80 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
             
         }
+
+
+        #region Guide Prompt Code
+        private void refreshSetupStatus()
+        {
+            if(ProjectNumberTextBox.Text != "" && SampleNameTextBox.Text != "" && HeightTextBox.Text != "" && WidthTextBox.Text != "" && TestDatePicker.SelectedDate != null)
+            {
+                testArticleInfoComplete = true;
+            }
+
+            if (testArticleInfoComplete)
+            {
+                
+            }
+
+            else
+            {
+                GuideTextBlock.Text = "Please enter test article information.";
+                return;
+            }
+
+            if (plcConnected && MWR.manualBtn.IsEnabled == false)
+            {
+                Console.WriteLine("PLC connected. Manual tab enabled.");
+                MWR.EnableManualTab();
+            }
+
+            else
+            {
+                GuideTextBlock.Text = "Please connect to the PLC.";
+                return;
+            }
+
+            if (forceProfileLoaded && MWR.operationBtn.IsEnabled == false)
+            {
+                Console.WriteLine("PLC connected. Operation tab enabled.");
+                MWR.EnableOperationTab();
+            }
+
+            else
+            {
+                GuideTextBlock.Text = "To also enable operation mode, please import the force profile.";
+                return;
+            }
+        }
+
+        private void ProjectNumberTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            refreshSetupStatus();
+        }
+
+        private void SampleNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            refreshSetupStatus();
+        }
+
+        private void HeightTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            refreshSetupStatus();
+        }
+
+        private void WidthTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            refreshSetupStatus();
+        }
+
+        private void DateTimePicker_LostFocus(object sender, RoutedEventArgs e)
+        {
+            refreshSetupStatus();
+        }
+
+
+        #endregion
+
+
     }
 }

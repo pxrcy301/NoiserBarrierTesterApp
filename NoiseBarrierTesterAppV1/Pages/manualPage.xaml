@@ -20,7 +20,8 @@
     <Grid Background="#f1f2eb">
         <Grid.RowDefinitions>
             <RowDefinition Height="35*"/>
-            <RowDefinition Height="65*"/>
+            <RowDefinition Height="55*"/>
+            <RowDefinition Height="10*"/>
         </Grid.RowDefinitions>
         
         <!-- Control and Status Elements-->
@@ -250,7 +251,23 @@
 
         </Grid>
 
+        <!--Options and Data Export-->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="30*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="20*"/>
+                <ColumnDefinition Width="30*"/>
+            </Grid.ColumnDefinitions>
 
-        
+            <TextBlock Text="Optional Measurements to Display" Style="{StaticResource subheaderTextBlock}"/>
+            <CheckBox Grid.Column="1" Name="ForcesCheckBox" Content="Forces" Style="{StaticResource defaultCheckBox}" IsThreeState="False"/>
+            <CheckBox Grid.Column="2" Name="DistancesCheckBox" Content="Distances" Style="{StaticResource defaultCheckBox}" IsThreeState="False"/>
+            <Border Grid.Column="5" Style="{StaticResource defaultBorder}">
+                <Button Style="{StaticResource defaultButton}" Content="Export Data" Click="ExportDataBtn_Click"/>
+            </Border>
+        </Grid>
+
+
     </Grid>
 </Page>

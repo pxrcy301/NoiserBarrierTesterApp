@@ -13,19 +13,16 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
+using ScottPlot;
 
 namespace NoiseBarrierTesterAppV1.Pages
 {
-    /// <summary>
-    /// Interaction logic for Page1.xaml
-    /// </summary>
     public partial class manualPage : Page
     {
 
         readonly MainWindow MWR; // Main Window Reference
         bool syncInputs = true;
-        bool leftPistonExtended = false;
-        bool rightPistonExtended = false;
 
         public manualPage(MainWindow referenceInstance)
         {
@@ -56,24 +53,57 @@ namespace NoiseBarrierTesterAppV1.Pages
         public void RefreshPlots()
         {
             leftPistonPlot.Plot.Clear();
-            
-            leftPistonPlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.pressureLeftList);
-
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftList).LegendText = "Pressure, Left (psi)";
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftSetpointList).LegendText = "Pressure Setpoint, Left (psi)";
+          
             rightPistonPlot.Plot.Clear();
-            rightPistonPlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.pressureRightList);
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightList).LegendText = "Pressure, Right (psi)";
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightSetpointList).LegendText = "Pressure Setpoint, Right (psi)";
 
+            if (ForcesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
+            {
+                leftPistonPlot.Plot.Axes.Right.IsVisible = true;
+                rightPistonPlot.Plot.Axes.Right.IsVisible = true;
+
+                var forceLeftPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceLeftList);
+                var forceRightPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceRightList);
+
+                forceLeftPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
+                forceRightPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
+
+                forceLeftPlot.LegendText = "Force, Left (lbf)";
+                forceRightPlot.LegendText = "Force, Right (lbf)";
+            }
+
+            else
+            {
+                leftPistonPlot.Plot.Axes.Right.IsVisible = false;
+                rightPistonPlot.Plot.Axes.Right.IsVisible = false;
+            }
+
+            if (DistancesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
+            {
+                leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceUpperList).LegendText = "Deflection, Upper (in)";
+                rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceLowerList).LegendText = "Deflection, Lower (in)";
+            }
+
+
+            leftPistonPlot.Plot.Legend.Alignment = Alignment.UpperLeft;
             leftPistonPlot.Plot.Axes.AutoScale();
-            rightPistonPlot.Plot.Axes.AutoScale();
-
+            leftPistonPlot.Plot.ShowLegend();
             leftPistonPlot.Refresh();
+
+            rightPistonPlot.Plot.Legend.Alignment = Alignment.UpperLeft;
+            rightPistonPlot.Plot.Axes.AutoScale();
+            rightPistonPlot.Plot.ShowLegend();
             rightPistonPlot.Refresh();
 
         }
 
         public void RefreshStatusBoxes()
         {
-            LeftPistonSetpointTextBlock.Text = $"{MWR.mmVars.leftPistonPressureSetpoint.ToString("F1")} psi";
-            RightPistonSetpointTextBlock.Text = $"{MWR.mmVars.rightPistonPressureSetpoint.ToString("F1")} psi";
+            LeftPistonSetpointTextBlock.Text = $"{MWR.mmVars.pressureLeftSetpoint.ToString("F1")} psi";
+            RightPistonSetpointTextBlock.Text = $"{MWR.mmVars.pressureRightSetpoint.ToString("F1")} psi";
             LeftPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
             RightPistonPressureTextBlock.Text = $"{MWR.mData.pressureRight.ToString("F1")} psi";
         }
@@ -83,54 +113,54 @@ namespace NoiseBarrierTesterAppV1.Pages
         // Left Piston
         private void LeftPistonPlus5Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.leftPistonPressureSetpoint += 5;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            MWR.mmVars.pressureLeftSetpoint += 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.rightPistonPressureSetpoint += 5;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+                MWR.mmVars.pressureRightSetpoint += 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             }
 
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void LeftPistonPlus1Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.leftPistonPressureSetpoint += 1;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            MWR.mmVars.pressureLeftSetpoint += 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.rightPistonPressureSetpoint += 1;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+                MWR.mmVars.pressureRightSetpoint += 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void LeftPistonMinus1Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.leftPistonPressureSetpoint -= 1;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            MWR.mmVars.pressureLeftSetpoint -= 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.rightPistonPressureSetpoint -= 1;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+                MWR.mmVars.pressureRightSetpoint -= 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void LeftPistonMinus5Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.leftPistonPressureSetpoint -= 5;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+            MWR.mmVars.pressureLeftSetpoint -= 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.rightPistonPressureSetpoint -= 5;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+                MWR.mmVars.pressureRightSetpoint -= 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -138,53 +168,53 @@ namespace NoiseBarrierTesterAppV1.Pages
         // Right Piston
         private void RightPistonPlus5Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.rightPistonPressureSetpoint += 5;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.mmVars.pressureRightSetpoint += 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.leftPistonPressureSetpoint += 5;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+                MWR.mmVars.pressureLeftSetpoint += 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void RightPistonPlus1Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.rightPistonPressureSetpoint += 1;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.mmVars.pressureRightSetpoint += 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.leftPistonPressureSetpoint += 1;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+                MWR.mmVars.pressureLeftSetpoint += 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void RightPistonMinus1Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.rightPistonPressureSetpoint -= 1;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.mmVars.pressureRightSetpoint -= 1;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.leftPistonPressureSetpoint -= 1;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+                MWR.mmVars.pressureLeftSetpoint -= 1;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
         private void RightPistonMinus5Btn_Click(object sender, RoutedEventArgs e)
         {
-            MWR.mmVars.rightPistonPressureSetpoint -= 5;
-            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.mmVars.pressureRightSetpoint -= 5;
+            MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureRightSetpoint);
             if (syncInputs)
             {
-                MWR.mmVars.leftPistonPressureSetpoint -= 5;
-                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.leftPistonPressureSetpoint);
+                MWR.mmVars.pressureLeftSetpoint -= 5;
+                MWR.testSystemProperties.ApplyPressureLimits(ref MWR.mmVars.pressureLeftSetpoint);
             }
-            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.leftPistonPressureSetpoint, MWR.SET_RIGHT, MWR.mmVars.rightPistonPressureSetpoint);
+            MWR.plc.SendPressures(MWR.SET_LEFT, MWR.mmVars.pressureLeftSetpoint, MWR.SET_RIGHT, MWR.mmVars.pressureRightSetpoint);
             RefreshStatusBoxes();
         }
 
@@ -207,17 +237,17 @@ namespace NoiseBarrierTesterAppV1.Pages
         private void LeftDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
         {
             // If piston extended, retract it
-            if (leftPistonExtended)
+            if (MWR.mmVars.leftExtended)
             {
                 MWR.plc.RetractLeft();
                 LeftPistonDirectionTextBlock.Text = "Retracted";
-                leftPistonExtended = false;
+                MWR.mmVars.leftExtended = false;
 
                 if (syncInputs)
                 {
                     MWR.plc.RetractRight();
                     RightPistonDirectionTextBlock.Text = "Retracted";
-                    rightPistonExtended = false;
+                    MWR.mmVars.rightExtended = false;
                 }
             }
 
@@ -226,13 +256,13 @@ namespace NoiseBarrierTesterAppV1.Pages
             {
                 MWR.plc.ExtendLeft();
                 LeftPistonDirectionTextBlock.Text = "Extended";
-                leftPistonExtended = true;
+                MWR.mmVars.leftExtended = true;
 
                 if (syncInputs)
                 {
                     MWR.plc.ExtendRight();
                     RightPistonDirectionTextBlock.Text = "Extended";
-                    rightPistonExtended = true;
+                    MWR.mmVars.rightExtended = true;
                 }
             }
         }
@@ -240,17 +270,17 @@ namespace NoiseBarrierTesterAppV1.Pages
         private void RightDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
         {
             // If piston extended, retract it
-            if (rightPistonExtended)
+            if (MWR.mmVars.rightExtended)
             {
                 MWR.plc.RetractRight();
                 RightPistonDirectionTextBlock.Text = "Retracted";
-                rightPistonExtended = false;
+                MWR.mmVars.rightExtended = false;
 
                 if (syncInputs)
                 {
                     MWR.plc.RetractLeft();
                     LeftPistonDirectionTextBlock.Text = "Retracted";
-                    leftPistonExtended = false;
+                    MWR.mmVars.leftExtended = false;
                 }
             }
 
@@ -259,17 +289,82 @@ namespace NoiseBarrierTesterAppV1.Pages
             {
                 MWR.plc.ExtendRight();
                 RightPistonDirectionTextBlock.Text = "Extended";
-                rightPistonExtended = true;
+                MWR.mmVars.rightExtended = true;
 
                 if (syncInputs)
                 {
                     MWR.plc.ExtendLeft();
                     LeftPistonDirectionTextBlock.Text = "Extended";
-                    leftPistonExtended = true;
+                    MWR.mmVars.leftExtended = true;
                 }
             }
         }
 
+        private void ExportDataBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // 1. Open file dialog to get file path
+            OpenFolderDialog openFolderDialog = new OpenFolderDialog();
 
+            try
+            {
+                if (openFolderDialog.ShowDialog() == true)
+                {
+
+                    string folderPath = openFolderDialog.FolderName;
+
+                    // 2. Get data from setup page
+                    string outputFileName;
+                    string projectNumber = MWR._setupPage.ProjectNumberTextBox.Text;
+                    string sampleName = MWR._setupPage.SampleNameTextBox.Text;
+                    string sampleHeight = MWR._setupPage.HeightTextBox.Text;
+                    string sampleWidth = MWR._setupPage.WidthTextBox.Text;
+                    DateTime? selectedDateTime = MWR._setupPage.TestDatePicker.SelectedDate;
+                    string selectedDateTimeString;
+
+                    if (selectedDateTime == null)
+                    {
+                        selectedDateTimeString = "NoDateSelected";
+                    }
+                    else
+                    {
+                        selectedDateTimeString = selectedDateTime.Value.ToString("yyyy-MM-dd");
+                    }
+
+                    // 3. Generate the name of the output file
+
+                    outputFileName = $"{projectNumber}_{sampleName}_{DateTime.Now.ToString("yyyy-MM-dd_HH'h'_mm'm'_ss's'")}_MANUAL_MODE.csv";
+
+                    // 4. Initialize output file and write setup entry information to it
+                    OutputFile finalOutputFile;
+                    finalOutputFile = new OutputFile(folderPath + "//" + outputFileName);
+                    finalOutputFile.Writeline($"Project Number,{projectNumber}");
+                    finalOutputFile.Writeline($"Test Date,{selectedDateTimeString}");
+                    finalOutputFile.Writeline($"Sample Name,{sampleName}");
+                    finalOutputFile.Writeline($"Width (ft),{sampleWidth}");
+                    finalOutputFile.Writeline($"Height (ft),{sampleHeight}");
+                    finalOutputFile.Writeline("");
+
+                    // 5. Write the header
+                    finalOutputFile.Writeline($"plcTime (s),pressureLeft (psi),pressureRight (psi),forceLeft (lbf),forceRight (lbf),forceTotal (lbf),deflectionUpper (in),deflectionLower (in),deflectionAverage (in),leftExtended,rightExtended");
+
+                    // 6. Write the data
+                    var x = MWR.mmVars;
+                    for (int i = 0; i < MWR.mmVars.plcTimeList.Count; i++)
+                    {
+                        finalOutputFile.Writeline($"{x.plcTimeList[i]},{x.pressureLeftList[i]},{x.pressureRightList[i]},{x.forceLeftList[i]},{x.forceRightList[i]},{x.forceTotalList[i]},{x.distanceUpperList[i]},{x.distanceLowerList[i]},{x.distanceAverageList[i]},{x.leftExtendedList[i]},{x.rightExtendedList[i]}");
+                    }
+
+                    finalOutputFile.Close();
+                    Console.WriteLine("Manual output file writing completed and closed.");
+
+                }
+            }
+
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+
+        }
     }
 }

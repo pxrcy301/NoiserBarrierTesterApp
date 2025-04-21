@@ -56,11 +56,11 @@
 
                         <TextBlock Grid.Column="0" Text="Project No." Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                            <TextBox Name="ProjectNumberTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                            <TextBox Name="ProjectNumberTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" LostFocus="ProjectNumberTextBox_LostFocus"/>
                         </Border>
                         <TextBlock Grid.Column="2" Text="Sample Name" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                            <TextBox Name="SampleNameTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                            <TextBox Name="SampleNameTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" LostFocus="SampleNameTextBox_LostFocus"/>
                         </Border>
                     </Grid>
 
@@ -75,12 +75,12 @@
 
                         <TextBlock Grid.Column="0" Text="Height (ft)" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15">
-                            <TextBox Name="HeightTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="heightTextBoxPreviewKeyDown"/>
+                            <TextBox Name="HeightTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="HeightTextBox_PreviewKeyDown" LostFocus="HeightTextBox_LostFocus"/>
                         </Border>
 
                         <TextBlock Grid.Column="2" Text="Width (ft)" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15">
-                            <TextBox Name="WidthTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="widthTextBoxPreviewKeyDown"/>
+                            <TextBox Name="WidthTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="WidthTextBox_PreviewKeyDown" LostFocus="WidthTextBox_LostFocus"/>
                         </Border>
 
                     </Grid>
@@ -89,14 +89,20 @@
                     <Grid Grid.Row="3" Height="74" VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="20*"/>
-                            <ColumnDefinition Width="80*"/>
+                            <ColumnDefinition Width="30*"/>
+                            <ColumnDefinition Width="20*"/>
+                            <ColumnDefinition Width="30*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock Grid.Column="0" Text="Date" Style="{DynamicResource fieldLabelTextBlock}"/>
                         <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
                             <Viewbox HorizontalAlignment="Left">
-                                <DatePicker Name="DateTimePicker" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                <DatePicker Name="TestDatePicker" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" LostFocus="DateTimePicker_LostFocus"/>
                             </Viewbox>
+                        </Border>
+
+                        <Border Grid.Column="2" Style="{DynamicResource defaultBorder}">
+                            <Button Name="DateTimePickTodayBtn" Content="Today" Style="{DynamicResource defaultButton}" Click="DateTimePickTodayBtn_Click"/>
                         </Border>
 
                     </Grid>
@@ -109,7 +115,7 @@
 
                 <!--Guide Message-->
                 <Border Grid.Row="2" Style="{DynamicResource defaultBorder}" BorderBrush="Transparent">
-                    <TextBlock Text='Press "Connect" to connect to the PLC.' Style="{DynamicResource descriptionTextBlock}"/>
+                    <TextBlock Name="GuideTextBlock" Text='Please enter test article information.' Style="{DynamicResource descriptionTextBlock}"/>
                 </Border>
             </Grid>
             
@@ -147,7 +153,7 @@
 
                     <TextBlock Grid.Column="2" Text='Reporting Interval (ms)' Style="{DynamicResource fieldLabelTextBlock}"/>
                     <Border Grid.Column="3" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                        <TextBox Name="ReportingIntervalTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                        <TextBox Name="ReportingIntervalTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="ReportingIntervalTextBox_PreviewKeyDown" LostFocus="ReportingIntervalTextBox_LostFocus"/>
                     </Border>
 
                     <Border Grid.Column="4" Style="{DynamicResource defaultBorder}">
@@ -165,10 +171,10 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0" Style="{DynamicResource defaultBorder}">
-                            <Button Content="Hard Limits" Style="{DynamicResource defaultButton}" Click="hardLimitsButtonClick"/>
+                            <Button Content="Hard Limits" Style="{DynamicResource defaultButton}" Click="HardLimitsBtn_Click"/>
                         </Border>
                         <Border Grid.Column="1" Style="{DynamicResource defaultBorder}">
-                            <Button Content="Import from CSV" Style="{DynamicResource defaultButton}" Click="importFromCSVClick"/>
+                            <Button Content="Import from CSV" Style="{DynamicResource defaultButton}" Click="ImportFromCSVBtn_Click"/>
                         </Border>
                  </Grid>
 
@@ -191,7 +197,7 @@
                     <TextBlock Grid.Column="2" Text="%" Style="{DynamicResource fieldLabelTextBlock}"/>
 
                     <Border Grid.Column="3" Style="{DynamicResource defaultBorder}">
-                        <Button Content="Apply" Style="{DynamicResource defaultButton}" Click="applyTimeScaleClick"/>
+                        <Button Content="Apply" Style="{DynamicResource defaultButton}" Click="ApplyTimeScaleBtn_Click"/>
                     </Border>
                 </Grid>
 

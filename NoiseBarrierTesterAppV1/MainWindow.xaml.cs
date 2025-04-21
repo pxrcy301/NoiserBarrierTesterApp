@@ -84,7 +84,6 @@ namespace NoiseBarrierTesterAppV1
 
         bool communicateWithPLC = true;
         public bool pausePLCCommsThread = false;
-        public bool PLCConnected = false;
 
         Thread plcCommsThread;
         #endregion
@@ -96,7 +95,7 @@ namespace NoiseBarrierTesterAppV1
         #endregion
 
         #region Data Structs
-        // Commanded Data (from input file)
+        // Commanded Data (from input file), for operation mode only
         public struct CommandedData
         {
             public List<float> timeList;
@@ -117,7 +116,7 @@ namespace NoiseBarrierTesterAppV1
         }
         public CommandedData cData;
 
-        // Measured Data (from PLC)
+        // Measured Data (from PLC), for operation mode only
         public struct MeasuredData
         {
             public float plcTime;
@@ -180,13 +179,70 @@ namespace NoiseBarrierTesterAppV1
         // Manual Mode Variables
         public struct ManualModeVariables
         {
-            public float leftPistonPressureSetpoint;
-            public float rightPistonPressureSetpoint;
+            public float plcTime;
+            public float pressureLeftSetpoint;
+            public float pressureRightSetpoint;
+            public float pressureLeft;
+            public float pressureRight;
+            public float forceLeft;
+            public float forceRight;
+            public float forceTotal;
+            public float distanceUpper;
+            public float distanceLower;
+            public float distanceAverage;
+            public bool leftExtended;
+            public bool rightExtended;
+
+            public List<float> plcTimeList;
+            public List<float> pressureLeftSetpointList;
+            public List<float> pressureRightSetpointList;
+            public List<float> pressureLeftList;
+            public List<float> pressureRightList;
+            public List<float> forceLeftList;
+            public List<float> forceRightList;
+            public List<float> forceTotalList;
+            public List<float> distanceUpperList;
+            public List<float> distanceLowerList;
+            public List<float> distanceAverageList;
+            public List<bool> leftExtendedList;
+            public List<bool> rightExtendedList;
+            
 
             public ManualModeVariables()
             {
-                leftPistonPressureSetpoint = 0;
-                rightPistonPressureSetpoint = 0;
+                this.leftExtended = false;
+                this.rightExtended = false;
+                
+                this.plcTimeList = new List<float>();
+                this.pressureLeftSetpointList = new List<float>();
+                this.pressureRightSetpointList = new List<float>();
+                this.pressureLeftList = new List<float>();
+                this.pressureRightList = new List<float>();
+                this.forceLeftList = new List<float>();
+                this.forceRightList = new List<float>();
+                this.forceTotalList = new List<float>();
+                this.distanceUpperList = new List<float>();
+                this.distanceLowerList = new List<float>();
+                this.distanceAverageList = new List<float>();
+                this.leftExtendedList = new List<bool>();
+                this.rightExtendedList = new List<bool>(); 
+                
+            }
+
+            public void ClearData()
+            {
+                this.plcTimeList.Clear();
+                this.pressureLeftSetpointList.Clear();
+                this.pressureRightSetpointList.Clear();
+                this.pressureLeftList.Clear();
+                this.pressureRightList.Clear();
+                this.forceLeftList.Clear();
+                this.forceRightList.Clear();
+                this.forceTotalList.Clear();
+                this.distanceUpperList.Clear();
+                this.distanceLowerList.Clear();
+                this.distanceAverageList.Clear();
+                
             }
         }
         public ManualModeVariables mmVars;
@@ -202,12 +258,16 @@ namespace NoiseBarrierTesterAppV1
             public float maxForce;
             public float minForce;
 
+            // Reporting rate in ms
+            public UInt16 plcReportingIntervalMin;
+
             public TestSystemProperties()
             {
                 this.maxPressure = 145; // psi
                 this.minPressure = 0;
                 this.maxForce = 5000; // lbf
                 this.minForce = 0;
+                this.plcReportingIntervalMin = 50;
             }
 
             public void ApplyPressureLimits(ref float pressure)
@@ -250,9 +310,10 @@ namespace NoiseBarrierTesterAppV1
 
             setupPages();
 
-            UITabDeselect(manualBorder);
-            UITabSelect(setupBorder);
-            UITabDeselect(operationBorder);
+            SetupUITabs();
+            //UITabDeselect(manualBorder);
+            //UITabSelect(setupBorder);
+            //UITabDeselect(operationBorder);
 
             //setupPLC();
 
@@ -269,7 +330,6 @@ namespace NoiseBarrierTesterAppV1
 
             // Navigate to the Setup Page by default
             displayFrame.Navigate(_setupPage);
-            onSetupButtonClick(null, null);
 
             // Ready a new file for writing to
             Console.WriteLine($"Working directory: {Directory.GetCurrentDirectory()}");
@@ -279,7 +339,7 @@ namespace NoiseBarrierTesterAppV1
         }
 
         #region PLC
-        public void setupPLC(string PLCPort)
+        public bool setupPLC(string PLCPort)
         {
             // Initialize PLC Object
             plc = new PLC(PLCPort, PLCBaudRate, this);
@@ -297,7 +357,7 @@ namespace NoiseBarrierTesterAppV1
             else
             {
                 Console.WriteLine($"PLC system check error. Received: {receivedMessage}");
-                return;
+                return false;
             }
 
             // Start PLCCommsThread
@@ -305,9 +365,8 @@ namespace NoiseBarrierTesterAppV1
             plcCommsThread.Start();
 
             // Update data reporting interval
-            plc.Writeline(REPORTING_INTERVAL_EDIT);
-            plc.Writeline(plcReportingInterval.ToString());
-
+            plc.UpdateReportingInterval();
+            return true;
 
         }
 
@@ -322,9 +381,52 @@ namespace NoiseBarrierTesterAppV1
                     msg = plc.Readline();
 
                     // Check if next line is data
-                    if(msg == "$")
+                    #region Manual Mode
+                    if (msg == "$" && operatingMode == OPERATING_MODE.MANUAL)
                     {
-                        if(plc.ReceiveData(ref mData.plcTime, 
+                        if(plc.ReceiveData(ref mmVars.plcTime,
+                                           ref mmVars.pressureLeft, ref mmVars.pressureRight,
+                                           ref mmVars.forceLeft, ref mmVars.forceRight,
+                                           ref mmVars.distanceUpper, ref mmVars.distanceLower))
+                        {
+                            // Calculate Derived Values
+                            mmVars.forceTotal = mmVars.forceLeft + mmVars.forceRight;
+                            mmVars.distanceAverage = (mmVars.distanceUpper + mmVars.distanceLower)/2f;
+
+                            // Store Values in Lists
+                            mmVars.pressureLeftSetpointList.Add(mmVars.pressureLeftSetpoint);
+                            mmVars.pressureRightSetpointList.Add(mmVars.pressureRightSetpoint);
+
+                            mmVars.plcTimeList.Add(mmVars.plcTime);
+                            mmVars.pressureLeftList.Add(mmVars.pressureLeft);
+                            mmVars.pressureRightList.Add(mmVars.pressureRight);
+                            mmVars.forceLeftList.Add(mmVars.forceLeft);
+                            mmVars.forceRightList.Add(mmVars.forceRight);
+                            mmVars.forceTotalList.Add(mmVars.forceTotal);
+                            mmVars.distanceUpperList.Add(mmVars.distanceUpper);
+                            mmVars.distanceLowerList.Add(mmVars.distanceLower);
+                            mmVars.distanceAverageList.Add(mmVars.distanceAverage);
+                            mmVars.leftExtendedList.Add(mmVars.leftExtended);
+                            mmVars.rightExtendedList.Add(mmVars.rightExtended);
+
+                            // Refresh plots
+                            Application.Current.Dispatcher.Invoke(() =>
+                            {
+                                _manualPage.RefreshPlots();
+                                _manualPage.RefreshStatusBoxes();
+                            });
+                        }
+                    }
+
+
+
+                    #endregion
+
+                    #region Operation Mode
+                    else if (msg == "$" && operatingMode == OPERATING_MODE.OPERATION)
+                    {
+
+                        if (plc.ReceiveData(ref mData.plcTime, 
                                            ref mData.pressureLeft, ref mData.pressureRight,
                                            ref mData.forceLeft, ref mData.forceRight, 
                                            ref mData.distanceUpper, ref mData.distanceLower)
@@ -353,35 +455,24 @@ namespace NoiseBarrierTesterAppV1
                             mData.distanceDownList.Add(mData.distanceLower);
                             mData.distanceAverageList.Add(mData.distanceAverage);
 
-                            // Update the plot with the new data
-                            switch (operatingMode)
-                            {
-                                case OPERATING_MODE.MANUAL:
-                                    Application.Current.Dispatcher.Invoke(() => { _manualPage.RefreshPlots();
-                                                                                  _manualPage.RefreshStatusBoxes();
-                                    });
-                                    break;
+                            // Update the plot and data file with the new data
 
-                                case OPERATING_MODE.OPERATION:
-                                    Application.Current.Dispatcher.Invoke(() => {_operationPage.RefreshPlots();
-                                                                                 _operationPage.RefreshStatusBoxes();
-                                    });
-                                    tempOutputFile.WriteData(mData.plcTime,
-                                                         mData.pressureLeft, mData.pressureRight,
-                                                         mData.forceLeft, mData.forceRight, mData.forceAverage,
-                                                         mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
-                                    break;
-
-                                default:
-                                    break;
-
-                            }
+                            Application.Current.Dispatcher.Invoke(() => {
+                                _operationPage.RefreshPlots();
+                                _operationPage.RefreshStatusBoxes();
+                            });
+                            tempOutputFile.WriteData(mData.plcTime,
+                                                 mData.pressureLeft, mData.pressureRight,
+                                                 mData.forceLeft, mData.forceRight, mData.forceAverage,
+                                                 mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
+                      
                         }
                         else
                         {
                             debugPrint("Data failed to be received from PLC.");
                         }
                     }
+                    #endregion
 
                     // Any other message will just be repeated to console:
                     else
@@ -394,7 +485,7 @@ namespace NoiseBarrierTesterAppV1
 
         #endregion
 
-        #region pages
+        #region Pages
         void setupPages()
         {
             _manualPage = new manualPage(this);
@@ -404,6 +495,29 @@ namespace NoiseBarrierTesterAppV1
         #endregion
 
         #region UI
+        private void SetupUITabs()
+        {
+            manualBorder.Background= new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+            operationBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+            manualBtn.IsEnabled = false;
+            setupBtn.IsEnabled = false;
+            operationBtn.IsEnabled = false;
+        }
+
+        public void EnableManualTab()
+        {
+            manualBorder.Background = (Brush)Application.Current.MainWindow.FindResource("PrimaryColor");
+            manualBtn.IsEnabled = true;
+            setupBtn.IsEnabled = true;
+        }
+
+        public void EnableOperationTab()
+        {
+            operationBorder.Background = (Brush)Application.Current.MainWindow.FindResource("PrimaryColor");
+            operationBtn.IsEnabled = true;
+            setupBtn.IsEnabled = true;
+        }
+
 
         private void UITabSelect(System.Windows.Controls.Border border)
         {
@@ -417,65 +531,57 @@ namespace NoiseBarrierTesterAppV1
             border.BorderThickness = new Thickness(5, 5, 5, 5);
         }
 
-        private void onManualButtonClick(object? sender, RoutedEventArgs? e)
+        private void ManualBtn_Click(object? sender, RoutedEventArgs? e)
         {
-            if (PLCConnected)
-            {
-                plc.Writeline(MODE_EXIT);
-                plc.Writeline(MANUAL_MODE_ENTER);
-                operatingMode = OPERATING_MODE.MANUAL;
-                mData.ClearData();
+            plc.Writeline(MODE_EXIT);
+            plc.Writeline(MANUAL_MODE_ENTER);
+            operatingMode = OPERATING_MODE.MANUAL;
+            mmVars.ClearData();
 
-                UITabSelect(manualBorder);
-                UITabDeselect(setupBorder);
-                UITabDeselect(operationBorder);
-
-                displayFrame.Navigate(_manualPage);
-            }
+            UITabSelect(manualBorder);
+            if(setupBtn.IsEnabled == true) { UITabDeselect(setupBorder); }
+            if (operationBtn.IsEnabled == true) { UITabDeselect(operationBorder); }
+           
+            displayFrame.Navigate(_manualPage);
             
         }
 
-        private void onSetupButtonClick(object? sender, RoutedEventArgs? e)
+        private void SetupBtn_Click(object? sender, RoutedEventArgs? e)
         {
-            if (PLCConnected)
-            {
-                plc.Writeline(MODE_EXIT);
+            plc.Writeline(MODE_EXIT);
 
-                operatingMode = OPERATING_MODE.SELECT;
-                mData.ClearData();
+            operatingMode = OPERATING_MODE.SELECT;
+            mData.ClearData();
+            mmVars.ClearData();
 
-                UITabDeselect(manualBorder);
-                UITabSelect(setupBorder);
-                UITabDeselect(operationBorder);
+            if (manualBtn.IsEnabled == true) { UITabDeselect(manualBorder); }
+            UITabSelect(setupBorder);
+            if (operationBtn.IsEnabled == true) { UITabDeselect(operationBorder); }
 
-                displayFrame.Navigate(_setupPage);
-            }
+            displayFrame.Navigate(_setupPage);
             
         }
 
-        private void onOperationButtonClick(object? sender, RoutedEventArgs? e)
+        private void OperationBtn_Click(object? sender, RoutedEventArgs? e)
         {
-            if (PLCConnected)
-            {
-                plc.Writeline(MODE_EXIT);
-                plc.Writeline(OPERATION_MODE_ENTER);
-                operatingMode = OPERATING_MODE.OPERATION;
-                mData.ClearData();
+            plc.Writeline(MODE_EXIT);
+            plc.Writeline(OPERATION_MODE_ENTER);
+            operatingMode = OPERATING_MODE.OPERATION;
+            mData.ClearData();
+            mmVars.ClearData();
 
-                UITabDeselect(manualBorder);
-                UITabDeselect(setupBorder);
-                UITabSelect(operationBorder);
+            if (manualBtn.IsEnabled == true) { UITabDeselect(manualBorder); }
+            if (setupBtn.IsEnabled == true) { UITabDeselect(setupBorder); }
+            UITabSelect(operationBorder);
 
-                displayFrame.Navigate(_operationPage);
-            }          
-
+            displayFrame.Navigate(_operationPage);        
         }
         #endregion
 
         private void onMainWindowClose(object sender, System.ComponentModel.CancelEventArgs e)
         {
             communicateWithPLC = false;
-            if (PLCConnected)
+            if (_setupPage.plcConnected)
             {
                 plc.Writeline("MODE_EXIT");
                 plc.ClearIncomingBytes();

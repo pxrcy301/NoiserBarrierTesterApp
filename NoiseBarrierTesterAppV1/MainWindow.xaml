@@ -71,7 +71,7 @@
 
                 <!--Setup Button-->
                 <Border Name="manualBorder"  Grid.Row="0" CornerRadius="30,0,0,30" BorderThickness="5,5,0,5" BorderBrush="Gray" Background="{StaticResource BackgroundColor}">
-                    <Button Content="Manual" Style="{StaticResource tabButtonStyle}" Click="onManualButtonClick">
+                    <Button Name="manualBtn" Content="Manual" Style="{StaticResource tabButtonStyle}" Click="ManualBtn_Click">
                         <Button.LayoutTransform>
                             <RotateTransform Angle="-90"/>
                         </Button.LayoutTransform>
@@ -80,7 +80,7 @@
 
                 <!--Setup Button-->
                 <Border Name="setupBorder"  Grid.Row="1" CornerRadius="30,0,0,30" BorderThickness="5,5,0,5" BorderBrush="Gray" Background="{StaticResource BackgroundColor}">
-                    <Button Content="Setup" Style="{StaticResource tabButtonStyle}" Click="onSetupButtonClick">
+                    <Button Name="setupBtn" Content="Setup" Style="{StaticResource tabButtonStyle}" Click="SetupBtn_Click">
                         <Button.LayoutTransform>
                             <RotateTransform Angle="-90"/>
                         </Button.LayoutTransform>
@@ -90,7 +90,7 @@
 
                 <!--Operation/Results Button-->
                 <Border Name="operationBorder" Grid.Row="2" CornerRadius="30,0,0,30" BorderThickness="5,5,5,5" BorderBrush="Gray" Background="{StaticResource PrimaryColor}">
-                    <Button Content="Operation" Style="{StaticResource tabButtonStyle}" Click="onOperationButtonClick">
+                    <Button Name="operationBtn" Content="Operation" Style="{StaticResource tabButtonStyle}" Click="OperationBtn_Click">
                         <Button.LayoutTransform>
                             <RotateTransform Angle="-90"/>
                         </Button.LayoutTransform>
