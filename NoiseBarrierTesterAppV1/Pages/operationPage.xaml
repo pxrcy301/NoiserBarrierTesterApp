@@ -242,18 +242,18 @@
                         <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButtonLarge}" Click="StartStopBtn_Click"/>
                     </Border>
 
-                    <Border Grid.Column="1" Style="{StaticResource defaultBorder}">
-                        <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButtonLarge}" Click="PauseResumeBtn_Click"/>
+                    <Border Grid.Column="1" Name="PauseResumeBorder" Style="{StaticResource defaultBorder}" Background="LightGray">
+                        <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButtonLarge}" Click="PauseResumeBtn_Click" IsEnabled="False"/>
                     </Border>
 
                 </Grid>
 
                 <Border Grid.Row="1" Style="{StaticResource defaultBorder}">
-                    <TextBlock Name="statusMessage" Text="Guide/Status Message" Style="{StaticResource descriptionTextBlock}"/>
+                    <TextBlock Name="GuideTextBlock" Text='Press "Start Test" to start the test.' TextWrapping="Wrap" Style="{StaticResource descriptionTextBlock}"/>
                 </Border>
 
-                <Border Grid.Row="2" Style="{StaticResource defaultBorder}">
-                    <Button Name="ExportDataBtn" Content="Export Data" Style="{StaticResource defaultButtonLarge}" Click="ExportDataBtn_Click"/>
+                <Border Grid.Row="2" Name="ExportDataBorder" Style="{StaticResource defaultBorder}">
+                    <Button Name="ExportDataBtn" Content="Export Data" Style="{StaticResource defaultButtonLarge}" IsEnabled="False" Click="ExportDataBtn_Click"/>
                 </Border>
 
             </Grid>

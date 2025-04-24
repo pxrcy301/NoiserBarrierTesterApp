@@ -149,7 +149,8 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
 
             catch (Exception ex) {
-                throw new Exception(ex.ToString());
+                var popupWindow = new PopupWindow($"Error importing force profile csv: {ex.Message}");
+                popupWindow.ShowDialog();
             }
 
         }
@@ -197,6 +198,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             RescaleTime();
         }
 
+        #region PLC
         private void ReportingIntervalTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab))
@@ -230,15 +232,20 @@ namespace NoiseBarrierTesterAppV1.Pages
                 COMPortTextBox.IsEnabled = false;
                 plcConnected = true;
                 refreshSetupStatus();
+                var popupWindow = new PopupWindow("PLC succesfully connected!");
+                popupWindow.ShowDialog();
+
             }
 
             catch(Exception ex)
             {
-                Console.WriteLine($"Error connecting to PLC: {ex.Message}");
+                var popupWindow = new PopupWindow($"Error connecting to PLC: {ex.Message}");
+                popupWindow.ShowDialog();
             }
             
         }
 
+        #endregion
 
         #region Guide Prompt Code
         private void refreshSetupStatus()

@@ -120,22 +120,51 @@ namespace NoiseBarrierTesterAppV1.Pages
             DistanceLowerMaxTextBlock.Text = $"{MWR.mData.distanceLowerMax} mm MAX";
         }
 
+        private void EnablePauseResumeBtn()
+        {
+            pauseResumeBtn.IsEnabled = true;
+            PauseResumeBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.Gray);
+        }
+
+        private void DisablePauseResumeBtn()
+        {
+            pauseResumeBtn.IsEnabled = false;
+            PauseResumeBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+        }
+
+        private void EnableExportDataBtn()
+        {
+            ExportDataBtn.IsEnabled = true;
+            ExportDataBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.Gray);
+        }
+
+        private void DisableExportDataBtn()
+        {
+            ExportDataBtn.IsEnabled = false;
+            ExportDataBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+        }
+
+
         public void StartStopBtn_Click(object sender, RoutedEventArgs e)
         {
             // Code for Stopping Test
             if (testRunning)
             {
-                if (sender != null)
+                if (sender != null) // If calling this function externally (e.g. autostop on receiving a test end keymessage from PLC), the sender argument should be null. Not null means it was called from the UI and therefore need to send a message to the PLC to stop
                 {
                     MWR.plc.Writeline(MWR.OPERATION_ESTOP);
                 }
-                
+                                
                 startStopBtn.Content = "Start Test";
+                GuideTextBlock.Text = "Test stopped. Press \"Export Data\" to export the data. Press \"Start Test\" to start the test again.";
 
                 // Re-enable Tabs
                 MWR.EnableManualTab();
                 MWR.EnableSetupTab();
                 MWR.EnableOperationButton();
+
+                DisablePauseResumeBtn();
+                EnableExportDataBtn();
             }
 
             // Code for Starting Test
@@ -156,6 +185,9 @@ namespace NoiseBarrierTesterAppV1.Pages
                 MWR.plc.Writeline(MWR.OPERATION_START);
                 MWR.mData.ClearData();
                 startStopBtn.Content = "Stop Test";
+                GuideTextBlock.Text = "Test running. Press \"Stop Test\" to stop the test.";
+                EnablePauseResumeBtn();
+                DisableExportDataBtn();
             }
 
                 testRunning = !testRunning;
@@ -168,12 +200,14 @@ namespace NoiseBarrierTesterAppV1.Pages
             {
                 MWR.plc.Writeline(MWR.OPERATION_RESUME);
                 pauseResumeBtn.Content = "Pause";
+                GuideTextBlock.Text = "Test running. Press \"Stop Test\" to stop the test.";
             }
 
             else // test not paused
             {
                 MWR.plc.Writeline(MWR.OPERATION_PAUSE);
                 pauseResumeBtn.Content = "Resume";
+                GuideTextBlock.Text = "Test paused. Press \"Resume\" to resume the test.";
             }
 
             testPaused = !testPaused;
@@ -244,5 +278,8 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
 
         }
+        
+        
+        
     }
 }

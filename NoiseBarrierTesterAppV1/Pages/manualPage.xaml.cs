@@ -59,12 +59,12 @@ namespace NoiseBarrierTesterAppV1.Pages
 
 
             leftPistonPlot.Plot.Clear();
-            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Left (psi)";
-            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureLeftSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Left (psi)";
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.pressureLeftList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Left (psi)";
+            leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.pressureLeftSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Left (psi)";
           
             rightPistonPlot.Plot.Clear();
-            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Right (psi)";
-            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.pressureRightSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Right (psi)";
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.pressureRightList.GetRange(dpStart, dpQty)).LegendText = "Pressure, Right (psi)";
+            rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.pressureRightSetpointList.GetRange(dpStart, dpQty)).LegendText = "Pressure Setpoint, Right (psi)";
 
             if(ForcesCheckBox.IsChecked == true || DistancesCheckBox.IsChecked == true)
             {
@@ -82,8 +82,8 @@ namespace NoiseBarrierTesterAppV1.Pages
             {
 
 
-                var forceLeftPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceLeftList.GetRange(dpStart, dpQty));
-                var forceRightPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.forceRightList.GetRange(dpStart, dpQty));
+                var forceLeftPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.forceLeftList.GetRange(dpStart, dpQty));
+                var forceRightPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.forceRightList.GetRange(dpStart, dpQty));
 
                 forceLeftPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
                 forceRightPlot.Axes.YAxis = rightPistonPlot.Plot.Axes.Right;
@@ -95,8 +95,8 @@ namespace NoiseBarrierTesterAppV1.Pages
 
             if (DistancesCheckBox.IsChecked == true)  // Have to do == true because it is nullable
             {
-                var distancesUpperPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceUpperList.GetRange(dpStart, dpQty));
-                var distancesLowerPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList, MWR.mmVars.distanceLowerList.GetRange(dpStart, dpQty));
+                var distancesUpperPlot = leftPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.distanceUpperList.GetRange(dpStart, dpQty));
+                var distancesLowerPlot = rightPistonPlot.Plot.Add.Scatter(MWR.mmVars.plcTimeList.GetRange(dpStart, dpQty), MWR.mmVars.distanceLowerList.GetRange(dpStart, dpQty));
 
                 distancesUpperPlot.Axes.YAxis = leftPistonPlot.Plot.Axes.Right;
                 distancesLowerPlot.Axes.YAxis = rightPistonPlot.Plot.Axes.Right;
@@ -122,8 +122,8 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             LeftPistonSetpointTextBlock.Text = $"{MWR.mmVars.pressureLeftSetpoint.ToString("F1")} psi";
             RightPistonSetpointTextBlock.Text = $"{MWR.mmVars.pressureRightSetpoint.ToString("F1")} psi";
-            LeftPistonPressureTextBlock.Text = $"{MWR.mData.pressureLeft.ToString("F1")} psi";
-            RightPistonPressureTextBlock.Text = $"{MWR.mData.pressureRight.ToString("F1")} psi";
+            LeftPistonPressureTextBlock.Text = $"{MWR.mmVars.pressureLeft.ToString("F1")} psi";
+            RightPistonPressureTextBlock.Text = $"{MWR.mmVars.pressureRight.ToString("F1")} psi";
         }
 
         #region Pressure Adjustment Button Functions

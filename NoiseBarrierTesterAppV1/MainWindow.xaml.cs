@@ -380,118 +380,134 @@ namespace NoiseBarrierTesterAppV1
             string msg;
             while (communicateWithPLC)
             {
-                if(plc.serialObject.BytesToRead > 0 && !pausePLCCommsThread)
+                try
                 {
-                    msg = plc.Readline();
-
-                    // Check if next line is data
-                    #region Manual Mode
-                    if (msg == "$" && operatingMode == OPERATING_MODE.MANUAL)
+                    if (plc.serialObject.BytesToRead > 0 && !pausePLCCommsThread)
                     {
-                        if(plc.ReceiveData(ref mmVars.plcTime,
-                                           ref mmVars.pressureLeft, ref mmVars.pressureRight,
-                                           ref mmVars.forceLeft, ref mmVars.forceRight,
-                                           ref mmVars.distanceUpper, ref mmVars.distanceLower))
+                        msg = plc.Readline();
+
+                        // Check if next line is data
+                        #region Manual Mode
+                        if (msg == "$" && operatingMode == OPERATING_MODE.MANUAL)
                         {
-                            // Calculate Derived Values
-                            mmVars.forceTotal = mmVars.forceLeft + mmVars.forceRight;
-                            mmVars.distanceAverage = (mmVars.distanceUpper + mmVars.distanceLower)/2f;
+                            if (plc.ReceiveData(ref mmVars.plcTime,
+                                               ref mmVars.pressureLeft, ref mmVars.pressureRight,
+                                               ref mmVars.forceLeft, ref mmVars.forceRight,
+                                               ref mmVars.distanceUpper, ref mmVars.distanceLower))
+                            {
+                                // Calculate Derived Values
+                                mmVars.forceTotal = mmVars.forceLeft + mmVars.forceRight;
+                                mmVars.distanceAverage = (mmVars.distanceUpper + mmVars.distanceLower) / 2f;
 
-                            // Store Values in Lists
-                            mmVars.pressureLeftSetpointList.Add(mmVars.pressureLeftSetpoint);
-                            mmVars.pressureRightSetpointList.Add(mmVars.pressureRightSetpoint);
+                                // Store Values in Lists
+                                mmVars.pressureLeftSetpointList.Add(mmVars.pressureLeftSetpoint);
+                                mmVars.pressureRightSetpointList.Add(mmVars.pressureRightSetpoint);
 
-                            mmVars.plcTimeList.Add(mmVars.plcTime);
-                            mmVars.pressureLeftList.Add(mmVars.pressureLeft);
-                            mmVars.pressureRightList.Add(mmVars.pressureRight);
-                            mmVars.forceLeftList.Add(mmVars.forceLeft);
-                            mmVars.forceRightList.Add(mmVars.forceRight);
-                            mmVars.forceTotalList.Add(mmVars.forceTotal);
-                            mmVars.distanceUpperList.Add(mmVars.distanceUpper);
-                            mmVars.distanceLowerList.Add(mmVars.distanceLower);
-                            mmVars.distanceAverageList.Add(mmVars.distanceAverage);
-                            mmVars.leftExtendedList.Add(mmVars.leftExtended);
-                            mmVars.rightExtendedList.Add(mmVars.rightExtended);
+                                mmVars.plcTimeList.Add(mmVars.plcTime);
+                                mmVars.pressureLeftList.Add(mmVars.pressureLeft);
+                                mmVars.pressureRightList.Add(mmVars.pressureRight);
+                                mmVars.forceLeftList.Add(mmVars.forceLeft);
+                                mmVars.forceRightList.Add(mmVars.forceRight);
+                                mmVars.forceTotalList.Add(mmVars.forceTotal);
+                                mmVars.distanceUpperList.Add(mmVars.distanceUpper);
+                                mmVars.distanceLowerList.Add(mmVars.distanceLower);
+                                mmVars.distanceAverageList.Add(mmVars.distanceAverage);
+                                mmVars.leftExtendedList.Add(mmVars.leftExtended);
+                                mmVars.rightExtendedList.Add(mmVars.rightExtended);
 
-                            // Refresh plots
+                                // Refresh plots
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    _manualPage.RefreshPlots();
+                                    _manualPage.RefreshStatusBoxes();
+                                });
+                            }
+                        }
+
+
+
+                        #endregion
+
+                        #region Operation Mode
+                        else if (msg == "$" && operatingMode == OPERATING_MODE.OPERATION)
+                        {
+
+                            if (plc.ReceiveData(ref mData.plcTime,
+                                               ref mData.pressureLeft, ref mData.pressureRight,
+                                               ref mData.forceLeft, ref mData.forceRight,
+                                               ref mData.distanceUpper, ref mData.distanceLower)
+
+                              )
+                            {
+                                debugPrint("Data successfully received from PLC.");
+
+                                // Add the instantaneous values to the list
+                                mData.distanceAverage = (mData.distanceUpper + mData.distanceLower) / 2f;
+                                mData.forceAverage = (mData.forceLeft + mData.forceRight) / 2f;
+                                mData.pressureLeftMax = Math.Max(mData.pressureLeftMax, mData.pressureLeft);
+                                mData.pressureRightMax = Math.Max(mData.pressureRightMax, mData.pressureRight);
+                                mData.forceLeftMax = Math.Max(mData.forceLeftMax, mData.forceLeft);
+                                mData.forceRightMax = Math.Max(mData.forceRightMax, mData.forceRight);
+                                mData.distanceUpperMax = Math.Max(mData.distanceUpperMax, mData.distanceUpper);
+                                mData.distanceLowerMax = Math.Max(mData.distanceLowerMax, mData.distanceLower);
+
+                                mData.timeList.Add(mData.plcTime);
+                                mData.pressureLeftList.Add(mData.pressureLeft);
+                                mData.pressureRightList.Add(mData.pressureRight);
+                                mData.forceLeftList.Add(mData.forceLeft);
+                                mData.forceRightList.Add(mData.forceRight);
+                                mData.forceAverageList.Add(mData.forceAverage);
+                                mData.distanceUpList.Add(mData.distanceUpper);
+                                mData.distanceDownList.Add(mData.distanceLower);
+                                mData.distanceAverageList.Add(mData.distanceAverage);
+
+                                // Update the plot and data file with the new data
+
+                                Application.Current.Dispatcher.Invoke(() => {
+                                    _operationPage.RefreshPlots();
+                                    _operationPage.RefreshStatusBoxes();
+                                });
+                                tempOutputFile.WriteData(mData.plcTime,
+                                                     mData.pressureLeft, mData.pressureRight,
+                                                     mData.forceLeft, mData.forceRight, mData.forceAverage,
+                                                     mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
+
+                            }
+                            else
+                            {
+                                debugPrint("Data failed to be received from PLC.");
+                            }
+                        }
+                        #endregion
+
+
+                        else if (msg == OPERATION_COMPLETE && _operationPage.testRunning)
+                        {
                             Application.Current.Dispatcher.Invoke(() =>
                             {
-                                _manualPage.RefreshPlots();
-                                _manualPage.RefreshStatusBoxes();
+                                _operationPage.StartStopBtn_Click(null, null);
                             });
                         }
-                    }
 
-
-
-                    #endregion
-
-                    #region Operation Mode
-                    else if (msg == "$" && operatingMode == OPERATING_MODE.OPERATION)
-                    {
-
-                        if (plc.ReceiveData(ref mData.plcTime, 
-                                           ref mData.pressureLeft, ref mData.pressureRight,
-                                           ref mData.forceLeft, ref mData.forceRight, 
-                                           ref mData.distanceUpper, ref mData.distanceLower)
-                           
-                          )
-                        {
-                            debugPrint("Data successfully received from PLC.");
-
-                            // Add the instantaneous values to the list
-                            mData.distanceAverage = (mData.distanceUpper + mData.distanceLower) / 2f;
-                            mData.forceAverage = (mData.forceLeft + mData.forceRight) / 2f;
-                            mData.pressureLeftMax = Math.Max(mData.pressureLeftMax, mData.pressureLeft);
-                            mData.pressureRightMax = Math.Max(mData.pressureRightMax, mData.pressureRight);
-                            mData.forceLeftMax = Math.Max(mData.forceLeftMax, mData.forceLeft);
-                            mData.forceRightMax = Math.Max(mData.forceRightMax, mData.forceRight);
-                            mData.distanceUpperMax = Math.Max(mData.distanceUpperMax, mData.distanceUpper);
-                            mData.distanceLowerMax = Math.Max(mData.distanceLowerMax, mData.distanceLower);
-
-                            mData.timeList.Add(mData.plcTime);
-                            mData.pressureLeftList.Add(mData.pressureLeft);
-                            mData.pressureRightList.Add(mData.pressureRight);
-                            mData.forceLeftList.Add(mData.forceLeft);
-                            mData.forceRightList.Add(mData.forceRight);
-                            mData.forceAverageList.Add(mData.forceAverage);
-                            mData.distanceUpList.Add(mData.distanceUpper);
-                            mData.distanceDownList.Add(mData.distanceLower);
-                            mData.distanceAverageList.Add(mData.distanceAverage);
-
-                            // Update the plot and data file with the new data
-
-                            Application.Current.Dispatcher.Invoke(() => {
-                                _operationPage.RefreshPlots();
-                                _operationPage.RefreshStatusBoxes();
-                            });
-                            tempOutputFile.WriteData(mData.plcTime,
-                                                 mData.pressureLeft, mData.pressureRight,
-                                                 mData.forceLeft, mData.forceRight, mData.forceAverage,
-                                                 mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
-                      
-                        }
+                        // Any other message will just be repeated to console:
                         else
                         {
-                            debugPrint("Data failed to be received from PLC.");
+                            Console.WriteLine($"Forwarded message from PLC: {msg}");
                         }
                     }
-                    #endregion
 
                     
-                    else if(msg == OPERATION_COMPLETE && _operationPage.testRunning)
-                    {
-                        Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            _operationPage.StartStopBtn_Click(null, null);
-                        });
-                    }
+                }
 
-                    // Any other message will just be repeated to console:
-                    else
+                catch (Exception ex)
+                                
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        Console.WriteLine($"Forwarded message from PLC: {msg}");
-                    }
+                        communicateWithPLC = false;
+                        var popupWindow = new PopupWindow($"FATAL PLC communication error: {ex.Message}");
+                        popupWindow.ShowDialog();
+                    });
                 }
             }
         }
@@ -593,6 +609,18 @@ namespace NoiseBarrierTesterAppV1
 
         private void SetupBtn_Click(object? sender, RoutedEventArgs? e)
         {
+            if(operatingMode == OPERATING_MODE.MANUAL)
+            {
+                var popupWindow = new PopupWindow("WARNING: Switching out of manual mode will delete the data collected. Press Acknowledge to proceed or close the window to cancel.");
+                bool? acknowledged = popupWindow.ShowDialog();
+
+                if (acknowledged == false)
+                {
+                    return;
+                }
+            }
+
+
             plc.Writeline(MODE_EXIT);
 
             operatingMode = OPERATING_MODE.SELECT;
@@ -609,6 +637,17 @@ namespace NoiseBarrierTesterAppV1
 
         private void OperationBtn_Click(object? sender, RoutedEventArgs? e)
         {
+            if (operatingMode == OPERATING_MODE.MANUAL)
+            {
+                var popupWindow = new PopupWindow("WARNING: Switching out of manual mode will delete the data collected. Press Acknowledge to proceed or close the window to cancel.");
+                bool? acknowledged = popupWindow.ShowDialog();
+
+                if (acknowledged == false)
+                {
+                    return;
+                }
+            }
+
             plc.Writeline(MODE_EXIT);
             plc.Writeline(OPERATION_MODE_ENTER);
             operatingMode = OPERATING_MODE.OPERATION;
