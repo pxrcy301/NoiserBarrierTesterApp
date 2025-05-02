@@ -38,7 +38,7 @@
 
                     <TextBlock Grid.Column="0" Text="String Potentiometer Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
                     <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                        <TextBox Name="StringPotConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center"/>
+                        <TextBox Name="StringPotConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="StringPotConstTextBox_PreviewKeyDown"/>
                     </Border>
                     <TextBlock Grid.Column="2" Text="mm per 10 Volts" Style="{DynamicResource fieldLabelTextBlock}"/>
                 </Grid>

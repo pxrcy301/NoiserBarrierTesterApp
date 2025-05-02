@@ -46,6 +46,12 @@ namespace NoiseBarrierTesterAppV1
             this.Close();
         }
 
-
+        private void StringPotConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && StringPotConstTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }
