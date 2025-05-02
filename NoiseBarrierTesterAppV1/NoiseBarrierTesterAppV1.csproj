@@ -10,16 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\setupButton.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ScottPlot.WPF" Version="5.0.54" />
     <PackageReference Include="System.IO.Ports" Version="9.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\setupButton.png" />
+    <Resource Include="Resources\SettingsIcon.png" />
   </ItemGroup>
 
   <ItemGroup>

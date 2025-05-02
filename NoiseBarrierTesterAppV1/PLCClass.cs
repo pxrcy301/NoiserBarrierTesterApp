@@ -76,6 +76,59 @@ namespace NoiseBarrierTesterAppV1
             
         }
 
+        public bool UpdateStringPotentiometerConstant(float spConstant)
+        {
+            try
+            {
+                this.Writeline(MWR.STRING_POT_CONSTANT_EDIT);
+                this.Writeline(spConstant.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateStringPotentiometerConstant():" + ex);
+                return false;
+            }
+
+        }
+
+        public bool UpdateLeftLoadCellConstant(float lcConstant)
+        {
+            try
+            {
+                this.Writeline(MWR.LOAD_CELL_L_CONST_EDIT);
+                this.Writeline(lcConstant.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateLeftLoadCellConstant():" + ex);
+                return false;
+            }
+
+        }
+
+        public bool UpdateRightLoadCellConstant(float lcConstant)
+        {
+            try
+            {
+                this.Writeline(MWR.LOAD_CELL_R_CONST_EDIT);
+                this.Writeline(lcConstant.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateRightLoadCellConstant():" + ex);
+                return false;
+            }
+
+        }
+
+
+
         public bool Writeline(string msg)
         // Writes a string to the serial object. Appends '\n' by default to the end of it (as defined by SerialPort.NewLine).
         // Returns true on success, false + error message on failure.
@@ -248,9 +301,6 @@ namespace NoiseBarrierTesterAppV1
                 return false;
             }
         }
-
-
-
 
         public bool ReceiveData(ref float plcTime, 
                                 ref float pressureLeft, ref float pressureRight,

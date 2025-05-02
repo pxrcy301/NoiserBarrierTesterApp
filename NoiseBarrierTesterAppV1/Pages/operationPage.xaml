@@ -234,7 +234,8 @@
                 <!--Process Control Buttons-->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80*"/>
+                        <ColumnDefinition Width="60*"/>
+                        <ColumnDefinition Width="20*"/>
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
 
@@ -244,6 +245,10 @@
 
                     <Border Grid.Column="1" Name="PauseResumeBorder" Style="{StaticResource defaultBorder}" Background="LightGray">
                         <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButtonLarge}" Click="PauseResumeBtn_Click" IsEnabled="False"/>
+                    </Border>
+
+                    <Border Grid.Column="2" Name="ZeroAllBorder" Style="{StaticResource defaultBorder}" Background="LightGray">
+                        <Button Name="ZeroAllBtn" Content="Zero All" Style="{StaticResource defaultButtonLarge}" Click="ZeroAll_Click"/>
                     </Border>
 
                 </Grid>

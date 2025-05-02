@@ -144,13 +144,28 @@ namespace NoiseBarrierTesterAppV1.Pages
             ExportDataBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
         }
 
+        private void EnableZeroAllBtn()
+        {
+            ZeroAllBtn.IsEnabled = true;
+            ZeroAllBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.Gray);
+        }
+
+        private void DisableZeroAllBtn()
+        {
+            ZeroAllBtn.IsEnabled = false;
+            ZeroAllBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+        }
+
+
+
 
         public void StartStopBtn_Click(object sender, RoutedEventArgs e)
         {
             // Code for Stopping Test
             if (testRunning)
             {
-                if (sender != null) // If calling this function externally (e.g. autostop on receiving a test end keymessage from PLC), the sender argument should be null. Not null means it was called from the UI and therefore need to send a message to the PLC to stop
+                // If calling this function externally (e.g. autostop on receiving a test end keymessage from PLC), the sender argument should be null. Not null means it was called from the UI and therefore need to send a message to the PLC to stop and ESTOP
+                if (sender != null) // ESTOP pressed
                 {
                     MWR.plc.Writeline(MWR.OPERATION_ESTOP);
                     startStopBtn.IsEnabled = false;
@@ -159,18 +174,16 @@ namespace NoiseBarrierTesterAppV1.Pages
                     GuideTextBlock.Text = "Emergency stop request sent to the PLC.";
 
                 }
-                else
+                else // Normal stop as returned by PLC
                 {
                     startStopBtn.Content = "Start Test";
                     GuideTextBlock.Text = "Test stopped. Press \"Export Data\" to export the data. Press \"Start Test\" to start the test again.";
-
+                    // Re-enable Tabs
+                    MWR.EnableManualTab();
+                    MWR.EnableSetupTab();
+                    MWR.EnableOperationButton();
+                    EnableZeroAllBtn();
                 }
-
-
-                // Re-enable Tabs
-                MWR.EnableManualTab();
-                MWR.EnableSetupTab();
-                MWR.EnableOperationButton();
 
                 DisablePauseResumeBtn();
                 EnableExportDataBtn();
@@ -197,6 +210,7 @@ namespace NoiseBarrierTesterAppV1.Pages
                 GuideTextBlock.Text = "Test running. Press \"ESTOP\" to stop the test in case of emergency.";
                 EnablePauseResumeBtn();
                 DisableExportDataBtn();
+                DisableZeroAllBtn();
             }
 
                 testRunning = !testRunning;
@@ -220,6 +234,12 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
 
             testPaused = !testPaused;
+        }
+
+        private void ZeroAll_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.plc.ZeroLoadCells();
+            MWR.plc.ZeroStringPotentiometers();
         }
 
         private void ExportDataBtn_Click(object sender, RoutedEventArgs e)
@@ -287,8 +307,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
 
         }
-        
-        
-        
+
+
     }
 }

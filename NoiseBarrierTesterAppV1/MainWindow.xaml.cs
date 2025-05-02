@@ -48,6 +48,9 @@ namespace NoiseBarrierTesterAppV1
         public String ERROR_MODE_EXIT = "ERR_CLEAR";
 
         public String REPORTING_INTERVAL_EDIT = "R_INT_EDIT";
+        public String STRING_POT_CONSTANT_EDIT = "SP_CONST_EDIT";
+        public String LOAD_CELL_L_CONST_EDIT = "LC_L_CONST_EDIT";
+        public String LOAD_CELL_R_CONST_EDIT = "LC_R_CONST_EDIT";
 
         public String CONNECTION_CHECK_REQUEST = "Connection check.";
         public String CONNECTION_CHECK_RESPONSE = "Connection OK.";
@@ -266,6 +269,9 @@ namespace NoiseBarrierTesterAppV1
             public UInt16 plcReportingIntervalMin;
             public UInt16 datapointsGraphed;
 
+            // Coefficients
+            public float defaultStringPotentiometerConstant;
+
             public TestSystemProperties()
             {
                 this.maxPressure = 145; // psi
@@ -274,6 +280,7 @@ namespace NoiseBarrierTesterAppV1
                 this.minForce = 0;
                 this.plcReportingIntervalMin = 50;
                 this.datapointsGraphed = 500;
+                this.defaultStringPotentiometerConstant = 751.9f;
             }
 
             public void ApplyPressureLimits(ref float pressure)

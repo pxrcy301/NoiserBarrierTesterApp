@@ -41,7 +41,7 @@ namespace NoiseBarrierTesterAppV1.Pages
 
             SetupPlots();
 
-            forceTable.ItemsSource = LoadForceTable();
+            ForceTable.ItemsSource = LoadForceTable();
         }
 
         private void SetupPlots()
@@ -67,6 +67,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             return forceTableData;
         }
 
+        #region Test Article Information
         private void HeightTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && HeightTextBox.Text.Contains('.')))
@@ -89,10 +90,15 @@ namespace NoiseBarrierTesterAppV1.Pages
             TestDatePicker.SelectedDate = DateTime.Today;
             refreshSetupStatus();
         }
+        #endregion
 
-        private void HardLimitsBtn_Click(object sender, RoutedEventArgs e)
+        #region Force Profile
+        private void SystemLimitsBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            var popupWindow = new PopupWindow($"System Limits:\n" +
+                                              $"Control Pressure: {MWR.testSystemProperties.minPressure} to {MWR.testSystemProperties.maxPressure} psi\n" +
+                                              $"Force Measurement: {MWR.testSystemProperties.minForce} to {MWR.testSystemProperties.maxForce} lbf");
+            popupWindow.ShowDialog();
         }
 
         private void ImportFromCSVBtn_Click(object sender, RoutedEventArgs e)
@@ -175,14 +181,14 @@ namespace NoiseBarrierTesterAppV1.Pages
                 forceTableDataList.Add(new ForceTableData { Original_Time = MWR.cData.timeList[i], Left_Force = MWR.cData.forceLeftList[i], Right_Force = MWR.cData.forceRightList[i] });
             }
             
-            forceTable.ItemsSource = forceTableDataList;
-            forceTable.InvalidateVisual();
+            ForceTable.ItemsSource = forceTableDataList;
+            ForceTable.InvalidateVisual();
         }
 
         private void RescaleTime()
         {
 
-            float testSpeed = float.Parse(testSpeedTextBox.Text)/100;
+            float testSpeed = float.Parse(TestSpeedTextBox.Text)/100;
 
             MWR.cData.scaledTimeList.Clear();
             foreach (float time in MWR.cData.timeList)
@@ -193,10 +199,19 @@ namespace NoiseBarrierTesterAppV1.Pages
             RefreshForcePlot();
         }
 
+        private void TestSpeedTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && TestSpeedTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+
         private void ApplyTimeScaleBtn_Click(object sender, RoutedEventArgs e)
         {
             RescaleTime();
         }
+        #endregion
 
         #region PLC
         private void ReportingIntervalTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -317,8 +332,21 @@ namespace NoiseBarrierTesterAppV1.Pages
         }
 
 
+
         #endregion
 
+        private void SettingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if(plcConnected)
+            {
 
+            }
+
+            else
+            {
+                var popupWindow = new PopupWindow($"Please connect to the PLC before editing the settings.");
+                popupWindow.ShowDialog();
+            }
+        }
     }
 }
