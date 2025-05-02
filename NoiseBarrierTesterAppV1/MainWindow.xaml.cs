@@ -67,7 +67,9 @@ namespace NoiseBarrierTesterAppV1
 
         public String EXCHANGE_DATAPOINTS_REQUEST = "EXCH_DP_REQ";
         public String EXCHANGE_DATAPOINTS_TERMINATION = "EXCH_DP_TERM";
-        
+
+        public String ZERO_LOAD_CELLS = "ZERO_LC";
+        public String ZERO_STRING_POTENTIOMETERS = "ZERO_SP";
 
         #endregion
 
@@ -604,7 +606,12 @@ namespace NoiseBarrierTesterAppV1
             if (operationBtn.IsEnabled == true) { UITabDeselect(operationBorder); }
            
             displayFrame.Navigate(_manualPage);
-            
+
+            plc.RetractLeft();
+            plc.RetractRight();
+            mmVars.leftExtended = false;
+            mmVars.rightExtended = false;
+
         }
 
         private void SetupBtn_Click(object? sender, RoutedEventArgs? e)

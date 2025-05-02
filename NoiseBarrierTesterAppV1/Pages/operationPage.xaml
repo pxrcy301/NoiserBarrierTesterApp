@@ -238,7 +238,7 @@
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Border Grid.Column="0" Style="{StaticResource defaultBorder}">
+                    <Border Name="StartStopBorder" Grid.Column="0" Style="{StaticResource defaultBorder}">
                         <Button Name="startStopBtn" Content="Start Test" Style="{StaticResource defaultButtonLarge}" Click="StartStopBtn_Click"/>
                     </Border>
 

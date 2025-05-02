@@ -153,10 +153,19 @@ namespace NoiseBarrierTesterAppV1.Pages
                 if (sender != null) // If calling this function externally (e.g. autostop on receiving a test end keymessage from PLC), the sender argument should be null. Not null means it was called from the UI and therefore need to send a message to the PLC to stop
                 {
                     MWR.plc.Writeline(MWR.OPERATION_ESTOP);
+                    startStopBtn.IsEnabled = false;
+                    StartStopBorder.Background = new SolidColorBrush(System.Windows.Media.Colors.LightGray);
+                    startStopBtn.Content = "ESTOP PRESSED";
+                    GuideTextBlock.Text = "Emergency stop request sent to the PLC.";
+
                 }
-                                
-                startStopBtn.Content = "Start Test";
-                GuideTextBlock.Text = "Test stopped. Press \"Export Data\" to export the data. Press \"Start Test\" to start the test again.";
+                else
+                {
+                    startStopBtn.Content = "Start Test";
+                    GuideTextBlock.Text = "Test stopped. Press \"Export Data\" to export the data. Press \"Start Test\" to start the test again.";
+
+                }
+
 
                 // Re-enable Tabs
                 MWR.EnableManualTab();
@@ -184,8 +193,8 @@ namespace NoiseBarrierTesterAppV1.Pages
                 // Start the Test
                 MWR.plc.Writeline(MWR.OPERATION_START);
                 MWR.mData.ClearData();
-                startStopBtn.Content = "Stop Test";
-                GuideTextBlock.Text = "Test running. Press \"Stop Test\" to stop the test.";
+                startStopBtn.Content = "ESTOP";
+                GuideTextBlock.Text = "Test running. Press \"ESTOP\" to stop the test in case of emergency.";
                 EnablePauseResumeBtn();
                 DisableExportDataBtn();
             }

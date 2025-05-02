@@ -207,6 +207,34 @@ namespace NoiseBarrierTesterAppV1
             }
         }
 
+        public bool ZeroLoadCells()
+        {
+            try
+            {
+                this.Writeline(this.MWR.ZERO_LOAD_CELLS);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.ZeroStringPotentiometers(): {ex}");
+                return false;
+            }
+        }
+
+        public bool ZeroStringPotentiometers()
+        {
+            try
+            {
+                this.Writeline(this.MWR.ZERO_STRING_POTENTIOMETERS);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in PLC.ZeroStringPotentiometers(): {ex}");
+                return false;
+            }
+        }
+
         public bool ExtendRight()
         {
             try
@@ -220,6 +248,10 @@ namespace NoiseBarrierTesterAppV1
                 return false;
             }
         }
+
+
+
+
         public bool ReceiveData(ref float plcTime, 
                                 ref float pressureLeft, ref float pressureRight,
                                 ref float forceLeft, ref float forceRight, 

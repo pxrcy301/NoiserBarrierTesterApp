@@ -35,6 +35,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             SetupPlots();
 
             RefreshStatusBoxes();
+            
         }
 
         private void SetupPlots()
@@ -383,6 +384,16 @@ namespace NoiseBarrierTesterAppV1.Pages
                 throw new Exception(ex.ToString());
             }
 
+        }
+
+        private void ZeroForcesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.plc.ZeroLoadCells();
+        }
+
+        private void ZeroDistancesBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MWR.plc.ZeroStringPotentiometers();
         }
     }
 }
