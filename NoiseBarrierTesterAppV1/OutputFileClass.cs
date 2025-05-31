@@ -39,7 +39,7 @@ namespace NoiseBarrierTesterAppV1
         {
             try
             {
-                this.streamWriter.WriteLine(string.Join(",", "Time (s)", "Pressure L (psi)", "Pressure R (psi)", "Force L (lbf)", "Force R (lbf)", "Force Avg (lbf)", "Distance Up (in)", "Distance Down (in)", "Distance Average (in)"));
+                this.streamWriter.WriteLine(string.Join(",", "Time (s)", "Pressure L (psi)", "Pressure R (psi)", "Force L (lbf)", "Force R (lbf)", "Force Avg (lbf)", "Distance Up (mm)", "Distance Down (mm)", "Distance Average (mm)"));
                 return true;
             }
             catch (Exception ex)

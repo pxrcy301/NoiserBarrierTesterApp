@@ -76,21 +76,36 @@ namespace NoiseBarrierTesterAppV1
             
         }
 
-        public bool UpdateStringPotentiometerConstant(float spConstant)
+        public bool UpdateUpperStringPotentiometerConstant(float spConstant)
         {
             try
             {
-                this.Writeline(MWR.STRING_POT_CONSTANT_EDIT);
+                this.Writeline(MWR.STRING_POT_U_CONSTANT_EDIT);
                 this.Writeline(spConstant.ToString());
                 return true;
             }
 
             catch (Exception ex)
             {
-                Console.WriteLine("Error in UpdateStringPotentiometerConstant():" + ex);
+                Console.WriteLine("Error in UpdateUpperStringPotentiometerConstant():" + ex);
                 return false;
             }
+        }
 
+        public bool UpdateLowerStringPotentiometerConstant(float spConstant)
+        {
+            try
+            {
+                this.Writeline(MWR.STRING_POT_L_CONSTANT_EDIT);
+                this.Writeline(spConstant.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateLowerStringPotentiometerConstant():" + ex);
+                return false;
+            }
         }
 
         public bool UpdateLeftLoadCellConstant(float lcConstant)
@@ -107,7 +122,6 @@ namespace NoiseBarrierTesterAppV1
                 Console.WriteLine("Error in UpdateLeftLoadCellConstant():" + ex);
                 return false;
             }
-
         }
 
         public bool UpdateRightLoadCellConstant(float lcConstant)
@@ -128,6 +142,56 @@ namespace NoiseBarrierTesterAppV1
         }
 
 
+        public bool UpdateKP(float kp)
+        {
+            try
+            {
+                this.Writeline(MWR.PID_P_CONST_EDIT);
+                this.Writeline(kp.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateKP():" + ex);
+                return false;
+            }
+
+        }
+
+        public bool UpdateKI(float ki)
+        {
+            try
+            {
+                this.Writeline(MWR.PID_I_CONST_EDIT);
+                this.Writeline(ki.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateKI():" + ex);
+                return false;
+            }
+
+        }
+
+        public bool UpdateKD(float kd)
+        {
+            try
+            {
+                this.Writeline(MWR.PID_D_CONST_EDIT);
+                this.Writeline(kd.ToString());
+                return true;
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in UpdateKD():" + ex);
+                return false;
+            }
+
+        }
 
         public bool Writeline(string msg)
         // Writes a string to the serial object. Appends '\n' by default to the end of it (as defined by SerialPort.NewLine).

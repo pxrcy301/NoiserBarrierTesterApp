@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
+using OpenTK.Graphics.OpenGL;
 
 namespace NoiseBarrierTesterAppV1.Pages
 {
@@ -63,11 +64,15 @@ namespace NoiseBarrierTesterAppV1.Pages
 
         public void RefreshPlots()
         {
+            int dpStart = Math.Max(MWR.mData.timeList.Count - MWR.testSystemProperties.datapointsGraphed, 0);
+            int dpQty = Math.Min(MWR.testSystemProperties.datapointsGraphed, MWR.mData.timeList.Count);
+
+
             // Force-Time Plot
             forceTimePlot.Plot.Clear();
 
-            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceLeftList).LegendText = "Left, Measured (lbf)";
-            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.forceRightList).LegendText = "Right, Measured (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList.GetRange(dpStart, dpQty), MWR.mData.forceLeftList.GetRange(dpStart, dpQty)).LegendText = "Left, Measured (lbf)";
+            forceTimePlot.Plot.Add.Scatter(MWR.mData.timeList.GetRange(dpStart, dpQty), MWR.mData.forceRightList.GetRange(dpStart, dpQty)).LegendText = "Right, Measured (lbf)";
             forceTimePlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceLeftList).LegendText = "Left, Commanded (lbf)";
             forceTimePlot.Plot.Add.Scatter(MWR.cData.scaledTimeList, MWR.cData.forceRightList).LegendText = "Right, Commanded (lbf)";
             forceTimePlot.Plot.Legend.Alignment = Alignment.UpperLeft;
@@ -81,9 +86,9 @@ namespace NoiseBarrierTesterAppV1.Pages
             // Deflection-Time PLot
             deflectionTimePlot.Plot.Clear();
             
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceUpList).LegendText = "Upper, Measured (in)";
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceDownList).LegendText = "Lower, Measured (in)";
-            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList, MWR.mData.distanceAverageList).LegendText = "Average, Measured (in)";
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList.GetRange(dpStart, dpQty), MWR.mData.distanceUpList.GetRange(dpStart, dpQty)).LegendText = "Upper, Measured (in)";
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList.GetRange(dpStart, dpQty), MWR.mData.distanceDownList.GetRange(dpStart, dpQty)).LegendText = "Lower, Measured (in)";
+            deflectionTimePlot.Plot.Add.Scatter(MWR.mData.timeList.GetRange(dpStart, dpQty), MWR.mData.distanceAverageList.GetRange(dpStart, dpQty)).LegendText = "Average, Measured (in)";
             deflectionTimePlot.Plot.Legend.Alignment = Alignment.UpperLeft;
 
             deflectionTimePlot.Plot.Axes.AutoScale();
@@ -95,7 +100,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             // Force-Deflection PLot
             forceDeflectionPlot.Plot.Clear();
 
-            forceDeflectionPlot.Plot.Add.Scatter(MWR.mData.distanceAverageList, MWR.mData.forceAverageList).LineStyle = LineStyle.None;
+            forceDeflectionPlot.Plot.Add.Scatter(MWR.mData.distanceAverageList.GetRange(dpStart, dpQty), MWR.mData.forceAverageList.GetRange(dpStart, dpQty)).LineStyle = LineStyle.None;
 
             forceDeflectionPlot.Plot.Axes.AutoScale();
 

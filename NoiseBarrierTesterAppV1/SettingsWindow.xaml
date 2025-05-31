@@ -24,6 +24,8 @@
                     <RowDefinition Height="15*"/>
                     <RowDefinition Height="15*"/>
                     <RowDefinition Height="15*"/>
+                    <RowDefinition Height="15*"/>
+                    <RowDefinition Height="15*"/>
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Name="MessageTextBlock" Text="Settings" Style="{StaticResource headerTextBlock}" TextWrapping="Wrap" Foreground="Black" HorizontalAlignment="Left"/>
@@ -36,14 +38,89 @@
                         <ColumnDefinition Width="20*"/>
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Column="0" Text="String Potentiometer Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <TextBlock Grid.Column="0" Text="Upper String Potentiometer Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
                     <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
-                        <TextBox Name="StringPotConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="StringPotConstTextBox_PreviewKeyDown"/>
+                        <TextBox Name="UpperStringPotConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="UpperStringPotConstTextBox_PreviewKeyDown"/>
                     </Border>
                     <TextBlock Grid.Column="2" Text="mm per 10 Volts" Style="{DynamicResource fieldLabelTextBlock}"/>
                 </Grid>
 
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Lower String Potentiometer Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="LowerStringPotConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="LowerStringPotConstTextBox_PreviewKeyDown"/>
+                    </Border>
+                    <TextBlock Grid.Column="2" Text="mm per 10 Volts" Style="{DynamicResource fieldLabelTextBlock}"/>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Left Load Cell Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="LeftLoadCellConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="LeftLoadCellConstTextBox_PreviewKeyDown"/>
+                    </Border>
+                    <TextBlock Grid.Column="2" Text="lb per Volt" Style="{DynamicResource fieldLabelTextBlock}"/>
+                </Grid>
+
                 <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="20*"/>
+                        <ColumnDefinition Width="20*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="Right Load Cell Constant" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="1" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="RightLoadCellConstTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="RightLoadCellConstTextBox_PreviewKeyDown"/>
+                    </Border>
+                    <TextBlock Grid.Column="2" Text="lb per Volt" Style="{DynamicResource fieldLabelTextBlock}"/>
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="12*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="12*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="12*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" Text="PID Constants" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    
+                    <TextBlock Grid.Column="1" Text="P: [psi/psi]" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="2" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="PTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="PTextBox_PreviewKeyDown"/>
+                    </Border>
+
+                    <TextBlock Grid.Column="3" Text="I: [psi/(psi*ms)]" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="4" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="ITextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="ITextBox_PreviewKeyDown"/>
+                    </Border>
+
+                    <TextBlock Grid.Column="5" Text="D: [psi/(psi/ms)]" Style="{DynamicResource fieldLabelTextBlock}"/>
+                    <Border Grid.Column="6" BorderBrush="Transparent" BorderThickness="15,15,15,15">
+                        <TextBox Name="DTextBox" TextWrapping="NoWrap" AcceptsReturn="False" FontSize="20" Text="" VerticalContentAlignment="Center" PreviewKeyDown="DTextBox_PreviewKeyDown"/>
+                    </Border>
+
+                </Grid>
+
+                <Grid Grid.Row="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="33*"/>
                         <ColumnDefinition Width="33*"/>

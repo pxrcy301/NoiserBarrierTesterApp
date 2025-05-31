@@ -247,7 +247,7 @@
                         <Button Name="pauseResumeBtn" Content="Pause" Style="{StaticResource defaultButtonLarge}" Click="PauseResumeBtn_Click" IsEnabled="False"/>
                     </Border>
 
-                    <Border Grid.Column="2" Name="ZeroAllBorder" Style="{StaticResource defaultBorder}" Background="LightGray">
+                    <Border Grid.Column="2" Name="ZeroAllBorder" Style="{StaticResource defaultBorder}">
                         <Button Name="ZeroAllBtn" Content="Zero All" Style="{StaticResource defaultButtonLarge}" Click="ZeroAll_Click" IsEnabled="True"/>
                     </Border>
 

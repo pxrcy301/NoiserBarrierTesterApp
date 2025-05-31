@@ -48,9 +48,13 @@ namespace NoiseBarrierTesterAppV1
         public String ERROR_MODE_EXIT = "ERR_CLEAR";
 
         public String REPORTING_INTERVAL_EDIT = "R_INT_EDIT";
-        public String STRING_POT_CONSTANT_EDIT = "SP_CONST_EDIT";
+        public String STRING_POT_U_CONSTANT_EDIT = "SP_U_CONST_EDIT";
+        public String STRING_POT_L_CONSTANT_EDIT = "SP_L_CONST_EDIT";
         public String LOAD_CELL_L_CONST_EDIT = "LC_L_CONST_EDIT";
         public String LOAD_CELL_R_CONST_EDIT = "LC_R_CONST_EDIT";
+        public String PID_P_CONST_EDIT = "PID_P_CONST_EDIT";
+        public String PID_I_CONST_EDIT = "PID_I_CONST_EDIT";
+        public String PID_D_CONST_EDIT = "PID_D_CONST_EDIT";
 
         public String CONNECTION_CHECK_REQUEST = "Connection check.";
         public String CONNECTION_CHECK_RESPONSE = "Connection OK.";
@@ -270,7 +274,22 @@ namespace NoiseBarrierTesterAppV1
             public UInt16 datapointsGraphed;
 
             // Coefficients
-            public float defaultStringPotentiometerConstant;
+            public float defaultUpperStringPotentiometerConstant;
+            public float defaultLowerStringPotentiometerConstant;
+            public float defaultLeftLoadCellConstant;
+            public float defaultRightLoadCellConstant;
+
+            public float upperStringPotentiometerConstant;
+            public float lowerStringPotentiometerConstant;
+            public float leftLoadCellConstant;
+            public float rightLoadCellConstant;
+
+            public float defaultKP;
+            public float defaultKI;
+            public float defaultKD;
+            public float KP;
+            public float KI;
+            public float KD;
 
             public TestSystemProperties()
             {
@@ -280,7 +299,20 @@ namespace NoiseBarrierTesterAppV1
                 this.minForce = 0;
                 this.plcReportingIntervalMin = 50;
                 this.datapointsGraphed = 500;
-                this.defaultStringPotentiometerConstant = 751.9f;
+                this.defaultUpperStringPotentiometerConstant = 751.9f;
+                this.upperStringPotentiometerConstant = this.defaultUpperStringPotentiometerConstant;
+                this.defaultLowerStringPotentiometerConstant = 751.9f;
+                this.lowerStringPotentiometerConstant = this.defaultLowerStringPotentiometerConstant;
+                this.defaultLeftLoadCellConstant = 1242.9920f;
+                this.leftLoadCellConstant = this.defaultLeftLoadCellConstant;
+                this.defaultRightLoadCellConstant = 1242.0049f;
+                this.rightLoadCellConstant = this.defaultRightLoadCellConstant;
+                this.defaultKP = 0.5f;
+                this.KP = this.defaultKP;
+                this.defaultKI = 0.5f / 1000f;
+                this.KI = this.defaultKI;
+                this.defaultKD = 0.5f * 1000f;
+                this.KD = this.defaultKD;
             }
 
             public void ApplyPressureLimits(ref float pressure)

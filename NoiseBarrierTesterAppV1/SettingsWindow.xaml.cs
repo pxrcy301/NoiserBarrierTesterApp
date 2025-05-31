@@ -27,31 +27,105 @@ namespace NoiseBarrierTesterAppV1
             InitializeComponent();
             MWR = mainWindowReference;
 
-            StringPotConstTextBox.Text = MWR.testSystemProperties.defaultStringPotentiometerConstant.ToString();
+            UpperStringPotConstTextBox.Text = MWR.testSystemProperties.upperStringPotentiometerConstant.ToString();
+            LowerStringPotConstTextBox.Text = MWR.testSystemProperties.lowerStringPotentiometerConstant.ToString();
+            LeftLoadCellConstTextBox.Text = MWR.testSystemProperties.leftLoadCellConstant.ToString();
+            RightLoadCellConstTextBox.Text = MWR.testSystemProperties.rightLoadCellConstant.ToString();
+            PTextBox.Text = MWR.testSystemProperties.KP.ToString();
+            ITextBox.Text = MWR.testSystemProperties.KI.ToString();
+            DTextBox.Text = MWR.testSystemProperties.KD.ToString();
         }
 
         private void DefaultBtn_Click(object sender, RoutedEventArgs e)
         {
-            StringPotConstTextBox.Text = MWR.testSystemProperties.defaultStringPotentiometerConstant.ToString();
+            UpperStringPotConstTextBox.Text = MWR.testSystemProperties.defaultUpperStringPotentiometerConstant.ToString();
+            LowerStringPotConstTextBox.Text = MWR.testSystemProperties.defaultLowerStringPotentiometerConstant.ToString();
+            LeftLoadCellConstTextBox.Text = MWR.testSystemProperties.defaultLeftLoadCellConstant.ToString();
+            RightLoadCellConstTextBox.Text = MWR.testSystemProperties.defaultRightLoadCellConstant.ToString();
+            PTextBox.Text = MWR.testSystemProperties.defaultKP.ToString();
+            ITextBox.Text = MWR.testSystemProperties.defaultKI.ToString();
+            DTextBox.Text = MWR.testSystemProperties.defaultKD.ToString();
         }
 
         private void ApplyCloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (StringPotConstTextBox.Text == "")
+            if (UpperStringPotConstTextBox.Text == "" || LowerStringPotConstTextBox.Text == "" || LeftLoadCellConstTextBox.Text == "" || RightLoadCellConstTextBox.Text == "")
             {
                 return;
             }
 
-            MWR.plc.UpdateStringPotentiometerConstant(float.Parse(StringPotConstTextBox.Text));
+            MWR.testSystemProperties.upperStringPotentiometerConstant = float.Parse(UpperStringPotConstTextBox.Text);
+            MWR.testSystemProperties.lowerStringPotentiometerConstant= float.Parse(LowerStringPotConstTextBox.Text);
+            MWR.testSystemProperties.leftLoadCellConstant = float.Parse(LeftLoadCellConstTextBox.Text);
+            MWR.testSystemProperties.rightLoadCellConstant = float.Parse(RightLoadCellConstTextBox.Text);
+            MWR.testSystemProperties.KP = float.Parse(PTextBox.Text);
+            MWR.testSystemProperties.KI = float.Parse(ITextBox.Text);
+            MWR.testSystemProperties.KD = float.Parse(DTextBox.Text);
+
+            MWR.plc.UpdateUpperStringPotentiometerConstant(MWR.testSystemProperties.upperStringPotentiometerConstant);
+            MWR.plc.UpdateLowerStringPotentiometerConstant(MWR.testSystemProperties.lowerStringPotentiometerConstant);
+            MWR.plc.UpdateLeftLoadCellConstant(MWR.testSystemProperties.leftLoadCellConstant);
+            MWR.plc.UpdateRightLoadCellConstant(MWR.testSystemProperties.rightLoadCellConstant);
+            MWR.plc.UpdateKP(MWR.testSystemProperties.KP);
+            MWR.plc.UpdateKI(MWR.testSystemProperties.KI);
+            MWR.plc.UpdateKD(MWR.testSystemProperties.KD);
+
             this.Close();
         }
 
-        private void StringPotConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void UpperStringPotConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && StringPotConstTextBox.Text.Contains('.')))
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && UpperStringPotConstTextBox.Text.Contains('.')))
             {
                 e.Handled = true;
             }
         }
+        private void LowerStringPotConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && LowerStringPotConstTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+        private void LeftLoadCellConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && LeftLoadCellConstTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+        private void RightLoadCellConstTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && RightLoadCellConstTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void PTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && PTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void ITextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && ITextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void DTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!((e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9) || e.Key == Key.Back || e.Key == Key.Tab || e.Key == Key.OemPeriod || e.Key == Key.Decimal) || ((e.Key == Key.OemPeriod || e.Key == Key.Decimal) && DTextBox.Text.Contains('.')))
+            {
+                e.Handled = true;
+            }
+        }
+
+
     }
 }
