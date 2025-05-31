@@ -170,6 +170,7 @@ namespace NoiseBarrierTesterAppV1
         {
             try
             {
+                this.ClearIncomingBytes();
                 this.Writeline(requestString);
                 string sentMessage;
                 string receivedMessage;

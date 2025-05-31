@@ -369,8 +369,9 @@ namespace NoiseBarrierTesterAppV1
             }
             else
             {
-                Console.WriteLine($"PLC system check error. Received: {receivedMessage}");
-                return false;
+                throw new Exception($"Tried to connect to the PLC but the wrong message was returned. Expected: {CONNECTION_CHECK_RESPONSE} Received: {receivedMessage}");
+                // Console.WriteLine($"PLC system check error. Received: {receivedMessage}");
+                // return false;
             }
 
             // Start PLCCommsThread
@@ -438,15 +439,13 @@ namespace NoiseBarrierTesterAppV1
                         #endregion
 
                         #region Operation Mode
-                        else if (msg == "$" && operatingMode == OPERATING_MODE.OPERATION)
+                        else if (msg == "$" && operatingMode == OPERATING_MODE.OPERATION && _operationPage.testRunning)
                         {
 
                             if (plc.ReceiveData(ref mData.plcTime,
                                                ref mData.pressureLeft, ref mData.pressureRight,
                                                ref mData.forceLeft, ref mData.forceRight,
-                                               ref mData.distanceUpper, ref mData.distanceLower)
-
-                              )
+                                               ref mData.distanceUpper, ref mData.distanceLower))
                             {
                                 debugPrint("Data successfully received from PLC.");
 
@@ -472,7 +471,8 @@ namespace NoiseBarrierTesterAppV1
 
                                 // Update the plot and data file with the new data
 
-                                Application.Current.Dispatcher.Invoke(() => {
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
                                     _operationPage.RefreshPlots();
                                     _operationPage.RefreshStatusBoxes();
                                 });
@@ -482,6 +482,35 @@ namespace NoiseBarrierTesterAppV1
                                                      mData.distanceUpper, mData.distanceLower, mData.distanceAverage);
 
                             }
+                        }
+                        else if (msg == "@" && operatingMode == OPERATING_MODE.OPERATION && !_operationPage.testRunning)
+                        {
+
+                            if (plc.ReceiveData(ref mData.plcTime,
+                                                ref mData.pressureLeft, ref mData.pressureRight,
+                                                ref mData.forceLeft, ref mData.forceRight,
+                                                ref mData.distanceUpper, ref mData.distanceLower))
+                            {
+                                debugPrint("Data successfully received from PLC.");
+
+                                // Add the instantaneous values to the list
+                                mData.distanceAverage = (mData.distanceUpper + mData.distanceLower) / 2f;
+                                mData.forceAverage = (mData.forceLeft + mData.forceRight) / 2f;
+                                mData.pressureLeftMax = Math.Max(mData.pressureLeftMax, mData.pressureLeft);
+                                mData.pressureRightMax = Math.Max(mData.pressureRightMax, mData.pressureRight);
+                                mData.forceLeftMax = Math.Max(mData.forceLeftMax, mData.forceLeft);
+                                mData.forceRightMax = Math.Max(mData.forceRightMax, mData.forceRight);
+                                mData.distanceUpperMax = Math.Max(mData.distanceUpperMax, mData.distanceUpper);
+                                mData.distanceLowerMax = Math.Max(mData.distanceLowerMax, mData.distanceLower);
+                                // Update the plot and data file with the new data
+
+                                Application.Current.Dispatcher.Invoke(() =>
+                                {
+                                    _operationPage.RefreshStatusBoxes();
+                                });
+
+                            }
+
                             else
                             {
                                 debugPrint("Data failed to be received from PLC.");
@@ -614,10 +643,15 @@ namespace NoiseBarrierTesterAppV1
            
             displayFrame.Navigate(_manualPage);
 
-            plc.RetractLeft();
-            plc.RetractRight();
-            mmVars.leftExtended = false;
-            mmVars.rightExtended = false;
+            //if (mmVars.leftExtended)
+            //{
+            //    _manualPage.LeftDirectionSwitchBtn_Click(null, null);
+            //}
+
+            //if (mmVars.rightExtended)
+            //{
+            //    _manualPage.RightDirectionSwitchBtn_Click(null, null);
+            //}
 
         }
 

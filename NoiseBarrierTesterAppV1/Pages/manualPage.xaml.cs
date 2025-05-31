@@ -253,7 +253,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
         }
 
-        private void LeftDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
+        public void LeftDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
         {
             // If piston extended, retract it
             if (MWR.mmVars.leftExtended)
@@ -286,7 +286,7 @@ namespace NoiseBarrierTesterAppV1.Pages
             }
         }
 
-        private void RightDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
+        public void RightDirectionSwitchBtn_Click(object sender, RoutedEventArgs e)
         {
             // If piston extended, retract it
             if (MWR.mmVars.rightExtended)

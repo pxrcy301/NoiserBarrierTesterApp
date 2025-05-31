@@ -47,7 +47,7 @@ namespace NoiseBarrierTesterAppV1.Pages
         private void SetupPlots()
         {
             forcePreviewPlot.Plot.Axes.Title.Label.Text = "Force Profile Preview";
-            forcePreviewPlot.Plot.Axes.Left.Label.Text = "Force [N]";
+            forcePreviewPlot.Plot.Axes.Left.Label.Text = "Force [lbf]";
             forcePreviewPlot.Plot.Axes.Bottom.Label.Text = "Time [s]"; ;
             forcePreviewPlot.Plot.FigureBackground.Color = ScottPlot.Color.FromHex("#f1f2eb");
         }
@@ -339,6 +339,8 @@ namespace NoiseBarrierTesterAppV1.Pages
         {
             if(plcConnected)
             {
+                var settingsWindow = new SettingsWindow(MWR);
+                settingsWindow.ShowDialog();
 
             }
 

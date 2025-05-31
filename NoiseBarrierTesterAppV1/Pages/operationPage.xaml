@@ -248,7 +248,7 @@
                     </Border>
 
                     <Border Grid.Column="2" Name="ZeroAllBorder" Style="{StaticResource defaultBorder}" Background="LightGray">
-                        <Button Name="ZeroAllBtn" Content="Zero All" Style="{StaticResource defaultButtonLarge}" Click="ZeroAll_Click"/>
+                        <Button Name="ZeroAllBtn" Content="Zero All" Style="{StaticResource defaultButtonLarge}" Click="ZeroAll_Click" IsEnabled="True"/>
                     </Border>
 
                 </Grid>
